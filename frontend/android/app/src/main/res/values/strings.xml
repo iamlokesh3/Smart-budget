@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Smart Budget</string>
+    <string name="title_activity_main">Smart Budget</string>
+    <string name="package_name">com.iamlokesh.smartbudget</string>
+    <string name="custom_url_scheme">com.iamlokesh.smartbudget</string>
+</resources>

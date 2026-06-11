@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { generateNotifications } from '../utils/analytics';
 
 const AppContext = createContext(null);
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://smart-budget-2-brfw.onrender.com/api';
 
 const STORAGE_KEY = 'smartbudget_v2_settings';
 
