@@ -1,0 +1,5 @@
+{"endpoint":"/api/transactions/:id","method":"PUT","role":"user","status1":200,"status2":200,"finding":true,"test_category":"idor"}
+{"endpoint":"/api/transactions/:id","method":"DELETE","role":"user","status1":200,"status2":200,"finding":true,"test_category":"idor"}
+{"endpoint":"/api/budgets/:id","method":"DELETE","role":"user","status1":200,"status2":200,"finding":true,"test_category":"idor"}
+{"endpoint":"/api/goals/:id","method":"PUT","role":"user","status1":200,"status2":200,"finding":true,"test_category":"idor"}
+{"endpoint":"/api/goals/:id","method":"DELETE","role":"user","status1":200,"status2":200,"finding":true,"test_category":"idor"}

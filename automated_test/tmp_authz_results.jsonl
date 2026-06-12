@@ -1,0 +1,12 @@
+{"endpoint":"/api/transactions","method":"GET","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/transactions","method":"POST","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/transactions/:id","method":"PUT","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/transactions/:id","method":"DELETE","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/transactions/rename-category","method":"PUT","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/budgets","method":"GET","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/budgets","method":"POST","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/budgets/:id","method":"DELETE","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/goals","method":"GET","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/goals","method":"POST","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/goals/:id","method":"PUT","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}
+{"endpoint":"/api/goals/:id","method":"DELETE","role":"user","status":200,"finding":false,"test_category":"authz_privesc","response_time_ms":0}

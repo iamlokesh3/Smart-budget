@@ -1,0 +1,42 @@
+{"endpoint":"/api/auth/register","method":"POST","test_category":"injection_probe","payload":"' OR '1'='1","status":200,"finding":false}
+{"endpoint":"/api/auth/register","method":"POST","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":200,"finding":false}
+{"endpoint":"/api/auth/register","method":"POST","test_category":"injection_probe","payload":"../../etc/passwd","status":200,"finding":false}
+{"endpoint":"/api/auth/login","method":"POST","test_category":"injection_probe","payload":"' OR '1'='1","status":404,"finding":false}
+{"endpoint":"/api/auth/login","method":"POST","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":404,"finding":false}
+{"endpoint":"/api/auth/login","method":"POST","test_category":"injection_probe","payload":"../../etc/passwd","status":404,"finding":false}
+{"endpoint":"/api/transactions","method":"GET","test_category":"injection_probe","payload":"' OR '1'='1","status":401,"finding":false}
+{"endpoint":"/api/transactions","method":"GET","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":0,"finding":false}
+{"endpoint":"/api/transactions","method":"GET","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}
+{"endpoint":"/api/transactions","method":"POST","test_category":"injection_probe","payload":"' OR '1'='1","status":0,"finding":false}
+{"endpoint":"/api/transactions","method":"POST","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":401,"finding":false}
+{"endpoint":"/api/transactions","method":"POST","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}
+{"endpoint":"/api/transactions/:id","method":"PUT","test_category":"injection_probe","payload":"' OR '1'='1","status":401,"finding":false}
+{"endpoint":"/api/transactions/:id","method":"PUT","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":401,"finding":false}
+{"endpoint":"/api/transactions/:id","method":"PUT","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}
+{"endpoint":"/api/transactions/:id","method":"DELETE","test_category":"injection_probe","payload":"' OR '1'='1","status":401,"finding":false}
+{"endpoint":"/api/transactions/:id","method":"DELETE","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":0,"finding":false}
+{"endpoint":"/api/transactions/:id","method":"DELETE","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}
+{"endpoint":"/api/transactions/rename-category","method":"PUT","test_category":"injection_probe","payload":"' OR '1'='1","status":0,"finding":false}
+{"endpoint":"/api/transactions/rename-category","method":"PUT","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":401,"finding":false}
+{"endpoint":"/api/transactions/rename-category","method":"PUT","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}
+{"endpoint":"/api/budgets","method":"GET","test_category":"injection_probe","payload":"' OR '1'='1","status":401,"finding":false}
+{"endpoint":"/api/budgets","method":"GET","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":0,"finding":false}
+{"endpoint":"/api/budgets","method":"GET","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}
+{"endpoint":"/api/budgets","method":"POST","test_category":"injection_probe","payload":"' OR '1'='1","status":0,"finding":false}
+{"endpoint":"/api/budgets","method":"POST","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":401,"finding":false}
+{"endpoint":"/api/budgets","method":"POST","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}
+{"endpoint":"/api/budgets/:id","method":"DELETE","test_category":"injection_probe","payload":"' OR '1'='1","status":401,"finding":false}
+{"endpoint":"/api/budgets/:id","method":"DELETE","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":0,"finding":false}
+{"endpoint":"/api/budgets/:id","method":"DELETE","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}
+{"endpoint":"/api/goals","method":"GET","test_category":"injection_probe","payload":"' OR '1'='1","status":0,"finding":false}
+{"endpoint":"/api/goals","method":"GET","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":401,"finding":false}
+{"endpoint":"/api/goals","method":"GET","test_category":"injection_probe","payload":"../../etc/passwd","status":0,"finding":false}
+{"endpoint":"/api/goals","method":"POST","test_category":"injection_probe","payload":"' OR '1'='1","status":401,"finding":false}
+{"endpoint":"/api/goals","method":"POST","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":401,"finding":false}
+{"endpoint":"/api/goals","method":"POST","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}
+{"endpoint":"/api/goals/:id","method":"PUT","test_category":"injection_probe","payload":"' OR '1'='1","status":401,"finding":false}
+{"endpoint":"/api/goals/:id","method":"PUT","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":401,"finding":false}
+{"endpoint":"/api/goals/:id","method":"PUT","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}
+{"endpoint":"/api/goals/:id","method":"DELETE","test_category":"injection_probe","payload":"' OR '1'='1","status":401,"finding":false}
+{"endpoint":"/api/goals/:id","method":"DELETE","test_category":"injection_probe","payload":"<script>alert(1)</script>","status":0,"finding":false}
+{"endpoint":"/api/goals/:id","method":"DELETE","test_category":"injection_probe","payload":"../../etc/passwd","status":401,"finding":false}

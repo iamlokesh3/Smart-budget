@@ -1,0 +1,12 @@
+{"endpoint":"/api/transactions","method":"GET","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/transactions","method":"POST","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/transactions/:id","method":"PUT","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/transactions/:id","method":"DELETE","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/transactions/rename-category","method":"PUT","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/budgets","method":"GET","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/budgets","method":"POST","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/budgets/:id","method":"DELETE","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/goals","method":"GET","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/goals","method":"POST","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/goals/:id","method":"PUT","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}
+{"endpoint":"/api/goals/:id","method":"DELETE","role":"anonymous","status":401,"finding":false,"test_category":"authn_bypass","response_time_ms":0}

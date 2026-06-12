@@ -1,0 +1,8 @@
+{
+  "baseUrl": "http://localhost:5000",
+  "roles": {
+    "anonymous": "",
+    "user": "1781096350731",
+    "admin": "1781096350731"
+  }
+}
