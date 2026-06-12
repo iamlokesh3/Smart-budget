@@ -1,0 +1,16 @@
+[
+  {"path":"/api/auth/register","method":"POST","protected":false},
+  {"path":"/api/auth/login","method":"POST","protected":false},
+  {"path":"/api/transactions","method":"GET","protected":true},
+  {"path":"/api/transactions","method":"POST","protected":true},
+  {"path":"/api/transactions/:id","method":"PUT","protected":true},
+  {"path":"/api/transactions/:id","method":"DELETE","protected":true},
+  {"path":"/api/transactions/rename-category","method":"PUT","protected":true},
+  {"path":"/api/budgets","method":"GET","protected":true},
+  {"path":"/api/budgets","method":"POST","protected":true},
+  {"path":"/api/budgets/:id","method":"DELETE","protected":true},
+  {"path":"/api/goals","method":"GET","protected":true},
+  {"path":"/api/goals","method":"POST","protected":true},
+  {"path":"/api/goals/:id","method":"PUT","protected":true},
+  {"path":"/api/goals/:id","method":"DELETE","protected":true}
+]

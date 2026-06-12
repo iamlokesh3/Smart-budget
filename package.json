@@ -5,10 +5,10 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/**/*.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
-    "test:auth": "mocha tests/auth.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
-    "test:form": "mocha tests/form.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
-    "test:ui": "mocha tests/ui.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
+    "test": "mocha tests/setup.js tests/auth.test.js tests/form.test.js tests/ui.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
+    "test:auth": "mocha tests/setup.js tests/auth.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
+    "test:form": "mocha tests/setup.js tests/form.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
+    "test:ui": "mocha tests/setup.js tests/ui.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
     "lint": "eslint . --ext .js",
     "report:excel": "node utilities/report.generator.js"
   },

@@ -5,3 +5,15 @@
 {"level":"info","message":"Running Excel Report Generator directly with mock/last results...","timestamp":"2026-06-12 13:14:05"}
 {"level":"info","message":"No raw results found, writing template Mobile_E2E_Report.xlsx","timestamp":"2026-06-12 13:14:05"}
 {"level":"info","message":"Generating Excel E2E Report at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-12 13:14:05"}
+{"level":"info","message":"Authenticating to reach form validations...","timestamp":"2026-06-12 13:14:20"}
+{"level":"info","message":"Authenticating user for UI gestures testing...","timestamp":"2026-06-12 13:14:20"}
+{"level":"info","message":"=== Starting Android E2E Test Suite Run ===","timestamp":"2026-06-12 13:14:45"}
+{"level":"info","message":"Initializing Appium session...","timestamp":"2026-06-12 13:14:45"}
+{"level":"warn","message":"ADB command failed or ADB is not installed. Defaulting to configured emulator/device capabilities.","timestamp":"2026-06-12 13:14:45"}
+{"level":"info","message":"No active devices found. Using default capabilities: Android Emulator (Android 13)","timestamp":"2026-06-12 13:14:45"}
+{"level":"info","message":"Running tests in Package Mode. Package: com.example.app, Activity: com.example.app.MainActivity","timestamp":"2026-06-12 13:14:45"}
+{"level":"error","message":"Failed to start Appium session: Error: Failed to create session.\nUnable to connect to \"http://127.0.0.1:4723/\", make sure browser driver is running on that address.\nIt seems like the service failed to start or is rejecting any connections.\n    at startWebDriverSession (file:///C:/Users/lokes/Downloads/smart-budget-v3/node_modules/webdriver/build/utils.js:69:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async WebDriver.newSession (file:///C:/Users/lokes/Downloads/smart-budget-v3/node_modules/webdriver/build/index.js:19:45)\n    at async remote (file:///C:/Users/lokes/Downloads/smart-budget-v3/node_modules/webdriverio/build/index.js:46:22)\n    at async DriverFactory.initDriver (file:///C:/Users/lokes/Downloads/smart-budget-v3/drivers/driver.factory.js:92:21)\n    at async Context.<anonymous> (file:///C:/Users/lokes/Downloads/smart-budget-v3/tests/setup.js:45:18)","timestamp":"2026-06-12 13:14:46"}
+{"level":"info","message":"=== Ending Android E2E Test Suite Run ===","timestamp":"2026-06-12 13:14:46"}
+{"level":"info","message":"Raw results JSON saved.","timestamp":"2026-06-12 13:14:46"}
+{"level":"info","message":"Generating Excel E2E Report at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-12 13:14:46"}
+{"level":"error","message":"Failed to compile Excel Report: Error: EBUSY: resource busy or locked, open 'C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx'","timestamp":"2026-06-12 13:14:46"}

@@ -1,0 +1,8 @@
+{
+  "baseUrl": "http://localhost:5000",
+  "roles": {
+    "anonymous": "",
+    "user": "<USER_TOKEN_OR_X_USER_ID_HEADER_VALUE>",
+    "admin": "<ADMIN_TOKEN_OR_X_USER_ID_HEADER_VALUE>"
+  }
+}
