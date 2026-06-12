@@ -1,0 +1,77 @@
+name: Mobile Appium E2E Automation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  appium-tests:
+    runs-on: macos-13 # macOS is required to run Android Emulators with hardware acceleration inside GHA
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Setup Java Development Kit (JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Appium and Drivers
+        run: |
+          npm install -g appium@next
+          appium driver install uiautomator2
+          appium -v
+          appium driver list
+
+      - name: Install Project Dependencies
+        run: |
+          npm ci
+
+      - name: Launch Android Emulator and Run E2E Test Suite
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          script: |
+            # Start Appium server in the background
+            appium --log logs/appium-server.log &
+            
+            # Wait for Appium to start listening on port 4723
+            echo "Waiting for Appium server to start..."
+            until curl -s http://127.0.0.1:4723/status > /dev/null; do
+              sleep 2
+            done
+            echo "Appium server is up!"
+            
+            # Execute automated E2E tests via Mocha
+            npm test
+            
+            # (Optional) compile report directly if test failed or succeeded
+            npm run report:excel
+
+      - name: Upload Test Reports and Logs
+        uses: actions/upload-artifact@v4
+        if: always() # Upload reports even if tests fail
+        with:
+          name: Appium-E2E-Execution-Artifacts
+          path: |
+            excel/Mobile_E2E_Report.xlsx
+            reports/
+            screenshots/
+            logs/
+          retention-days: 14

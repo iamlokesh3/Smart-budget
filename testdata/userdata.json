@@ -1,0 +1,57 @@
+{
+  "auth": {
+    "emptyUsername": {
+      "username": "",
+      "password": "Password123!",
+      "expectedUsernameError": "Username is required"
+    },
+    "emptyPassword": {
+      "username": "lokeshmk436@gmail.com",
+      "password": "",
+      "expectedPasswordError": "Password is required"
+    },
+    "invalidCredentials": {
+      "username": "invalid_user@example.com",
+      "password": "wrong_password",
+      "expectedAuthError": "Invalid email or password"
+    },
+    "validCredentials": {
+      "username": "lokeshmk436@gmail.com",
+      "password": "Password123!"
+    }
+  },
+  "formValidations": {
+    "validSubmission": {
+      "email": "testuser@gmail.com",
+      "phone": "9876543210",
+      "password": "StrongPassword123!",
+      "dropdownOption": "Savings Goal",
+      "agreeToTerms": true
+    },
+    "invalidEmail": {
+      "email": "bademail.com",
+      "phone": "9876543210",
+      "password": "StrongPassword123!",
+      "expectedEmailError": "Invalid email format"
+    },
+    "invalidPhone": {
+      "email": "testuser@gmail.com",
+      "phone": "abc-12345",
+      "password": "StrongPassword123!",
+      "expectedPhoneError": "Phone number must contain only numbers"
+    },
+    "weakPassword": {
+      "email": "testuser@gmail.com",
+      "phone": "9876543210",
+      "password": "123",
+      "expectedPasswordError": "Password must be at least 8 characters and contain mixed case and symbols"
+    },
+    "uncheckedTerms": {
+      "email": "testuser@gmail.com",
+      "phone": "9876543210",
+      "password": "StrongPassword123!",
+      "agreeToTerms": false,
+      "expectedCheckboxError": "You must agree to the Terms of Service"
+    }
+  }
+}

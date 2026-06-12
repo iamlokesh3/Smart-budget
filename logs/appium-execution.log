@@ -1,0 +1,7 @@
+{"metadata":{"level":"info","message":"Running Excel Report Generator directly with mock/last results...","timestamp":"2026-06-12 13:12:41"}}
+{"metadata":{"level":"info","message":"No raw results found, writing template Mobile_E2E_Report.xlsx","timestamp":"2026-06-12 13:12:41"}}
+{"metadata":{"level":"info","message":"Generating Excel E2E Report at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-12 13:12:41"}}
+{"metadata":{"level":"info","message":"Excel Report generated successfully at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-12 13:12:41"}}
+{"level":"info","message":"Running Excel Report Generator directly with mock/last results...","timestamp":"2026-06-12 13:14:05"}
+{"level":"info","message":"No raw results found, writing template Mobile_E2E_Report.xlsx","timestamp":"2026-06-12 13:14:05"}
+{"level":"info","message":"Generating Excel E2E Report at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-12 13:14:05"}

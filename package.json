@@ -1,0 +1,28 @@
+{
+  "name": "smart-budget-mobile-automation",
+  "version": "1.0.0",
+  "description": "Enterprise Appium E2E Automation Framework for Android Application",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests/**/*.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
+    "test:auth": "mocha tests/auth.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
+    "test:form": "mocha tests/form.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
+    "test:ui": "mocha tests/ui.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
+    "lint": "eslint . --ext .js",
+    "report:excel": "node utilities/report.generator.js"
+  },
+  "dependencies": {
+    "chai": "^4.4.1",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "mocha": "^10.4.0",
+    "mochawesome": "^7.1.3",
+    "mochawesome-report-generator": "^6.2.0",
+    "webdriverio": "^8.38.0",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "appium": "^2.11.1"
+  }
+}
