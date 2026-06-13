@@ -5,7 +5,7 @@ import { groupByCategory, groupByDay, groupByMonth } from '../utils/analytics';
 import { getCategoryMeta } from '../utils/aiParser';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 
 const COLORS = ['#3b82f6','#10b981','#8b5cf6','#f97316','#ec4899','#06b6d4','#84cc16','#f59e0b','#14b8a6','#64748b'];

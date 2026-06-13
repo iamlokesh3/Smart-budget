@@ -4,6 +4,7 @@ import path from 'path';
 import loginPage from '../pages/login.page.js';
 import dashboardPage from '../pages/dashboard.page.js';
 import { logger } from '../utilities/logger.js';
+import { recordPerformanceMetric } from './setup.js';
 
 const testData = JSON.parse(fs.readFileSync(path.resolve('testdata/userdata.json'), 'utf8'));
 
@@ -59,6 +60,7 @@ describe('Authentication Flow E2E Tests', function () {
     const isDashboard = await dashboardPage.isLoaded();
     const appLaunchDuration = Date.now() - appLaunchStart;
     
+    recordPerformanceMetric('Screen Load Time', 'Dashboard Page', appLaunchDuration, 'Dashboard loaded successfully after authentication');
     logger.info(`App Login & Load time: ${appLaunchDuration}ms`);
     expect(isDashboard).to.be.true;
   });

@@ -1,8 +1,11 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { generateNotifications } from '../utils/analytics';
 
 const AppContext = createContext(null);
-const API_URL = 'https://smart-budget-2-brfw.onrender.com/api';
+const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api'
+  : 'https://smart-budget-2-brfw.onrender.com/api';
 
 const STORAGE_KEY = 'smartbudget_v2_settings';
 
@@ -14,7 +17,7 @@ function loadSettings() {
 }
 
 function saveSettings(settings) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch { /* ignore */ }
 }
 
 export function AppProvider({ children }) {
@@ -41,7 +44,7 @@ export function AppProvider({ children }) {
   // Derived: notifications from spending data
   const notifications = generateNotifications(transactions, budgets, goals);
 
-  const fetchWithAuth = async (url, options = {}) => {
+  const fetchWithAuth = useCallback(async (url, options = {}) => {
     if (!user) return null;
     const res = await fetch(`${API_URL}${url}`, {
       ...options,
@@ -52,7 +55,7 @@ export function AppProvider({ children }) {
       },
     });
     return res.json();
-  };
+  }, [user]);
 
   const loadUserData = useCallback(async () => {
     if (!user) return;
@@ -70,10 +73,14 @@ export function AppProvider({ children }) {
       console.error('Failed to load user data', err);
     }
     setLoadingData(false);
-  }, [user]);
+  }, [user, fetchWithAuth]);
 
   useEffect(() => {
-    if (user) loadUserData();
+    if (user) {
+      Promise.resolve().then(() => {
+        loadUserData();
+      });
+    }
   }, [user, loadUserData]);
 
   // Auth
@@ -119,17 +126,17 @@ export function AppProvider({ children }) {
   const addTransaction = useCallback(async (tx) => {
     setTransactions(prev => [tx, ...prev]);
     await fetchWithAuth('/transactions', { method: 'POST', body: JSON.stringify(tx) });
-  }, [user]);
+  }, [fetchWithAuth]);
 
   const deleteTransaction = useCallback(async (id) => {
     setTransactions(prev => prev.filter(t => t.id !== id));
     await fetchWithAuth(`/transactions/${id}`, { method: 'DELETE' });
-  }, [user]);
+  }, [fetchWithAuth]);
 
   const updateTransaction = useCallback(async (id, updates) => {
     setTransactions(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
     await fetchWithAuth(`/transactions/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
-  }, [user]);
+  }, [fetchWithAuth]);
 
   const renameCategory = useCallback(async (oldCategory, newCategory, categoryIcon, categoryColor) => {
     setTransactions(prev => prev.map(t => {
@@ -147,7 +154,7 @@ export function AppProvider({ children }) {
       method: 'PUT',
       body: JSON.stringify({ oldCategory, newCategory, categoryIcon, categoryColor })
     });
-  }, [user]);
+  }, [fetchWithAuth]);
 
   // Budgets
   const addBudget = useCallback(async (budget) => {
@@ -161,28 +168,28 @@ export function AppProvider({ children }) {
       return [...prev, budget];
     });
     await fetchWithAuth('/budgets', { method: 'POST', body: JSON.stringify(budget) });
-  }, [user]);
+  }, [fetchWithAuth]);
 
   const deleteBudget = useCallback(async (id) => {
     setBudgets(prev => prev.filter(b => b.id !== id));
     await fetchWithAuth(`/budgets/${id}`, { method: 'DELETE' });
-  }, [user]);
+  }, [fetchWithAuth]);
 
   // Goals
   const addGoal = useCallback(async (goal) => {
     setGoals(prev => [...prev, goal]);
     await fetchWithAuth('/goals', { method: 'POST', body: JSON.stringify(goal) });
-  }, [user]);
+  }, [fetchWithAuth]);
 
   const updateGoal = useCallback(async (id, updates) => {
     setGoals(prev => prev.map(g => g.id === id ? { ...g, ...updates } : g));
     await fetchWithAuth(`/goals/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
-  }, [user]);
+  }, [fetchWithAuth]);
 
   const deleteGoal = useCallback(async (id) => {
     setGoals(prev => prev.filter(g => g.id !== id));
     await fetchWithAuth(`/goals/${id}`, { method: 'DELETE' });
-  }, [user]);
+  }, [fetchWithAuth]);
 
   // Chat
   const addChatMessage = useCallback((msg) => {

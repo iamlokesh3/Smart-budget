@@ -7,9 +7,9 @@ class LoginPage extends BasePage {
   get loginButton() { return '~login_button'; }
   
   // Validation and Error Selectors
-  get usernameError() { return 'id=com.example.app:id/username_error'; } // Resource ID fallback
-  get passwordError() { return 'id=com.example.app:id/password_error'; }
-  get authErrorMessage() { return 'id=com.example.app:id/auth_error_banner'; }
+  get usernameError() { return 'id=com.iamlokesh.smartbudget:id/username_error'; } // Resource ID fallback
+  get passwordError() { return 'id=com.iamlokesh.smartbudget:id/password_error'; }
+  get authErrorMessage() { return 'id=com.iamlokesh.smartbudget:id/auth_error_banner'; }
   
   // Screen Title for Verification
   get screenTitle() { return '//android.widget.TextView[@text="Sign In"]'; }

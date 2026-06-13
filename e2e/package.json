@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mocha": "^11.7.6"
+    "chai": "^6.2.2",
+    "mocha": "^11.7.6",
+    "selenium-webdriver": "^4.44.0"
   }
 }

@@ -1,0 +1,7 @@
+{"level":"info","message":"Running Excel Report Generator directly with mock/last results...","timestamp":"2026-06-13 12:22:17"}
+{"level":"info","message":"Generating Excel E2E Report at: C:\\Users\\Amrutha\\Downloads\\pdd\\Smart-budget\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-13 12:22:17"}
+{"level":"info","message":"Excel Report generated successfully at: C:\\Users\\Amrutha\\Downloads\\pdd\\Smart-budget\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-13 12:22:17"}
+{"level":"info","message":"Running Excel Report Generator directly with mock/last results...","timestamp":"2026-06-13 12:23:55"}
+{"level":"info","message":"No raw results found, writing template Mobile_E2E_Report.xlsx","timestamp":"2026-06-13 12:23:55"}
+{"level":"info","message":"Generating Excel E2E Report at: C:\\Users\\Amrutha\\Downloads\\pdd\\Smart-budget\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-13 12:23:55"}
+{"level":"info","message":"Excel Report generated successfully at: C:\\Users\\Amrutha\\Downloads\\pdd\\Smart-budget\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-13 12:23:55"}

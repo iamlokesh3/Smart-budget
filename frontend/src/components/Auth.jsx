@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Zap, Eye, EyeOff, User, Mail, Lock, ArrowLeft, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, User, Mail, Lock, ArrowLeft, Sparkles } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function Auth() {

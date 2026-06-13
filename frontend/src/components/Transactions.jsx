@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { parseNaturalLanguageTransaction, scanReceiptMock } from '../utils/aiAdvisor';
 import { 
@@ -9,13 +9,8 @@ import {
   Camera, 
   Trash2, 
   Edit3, 
-  TrendingUp, 
-  TrendingDown, 
-  HelpCircle,
   X,
-  CheckCircle2,
   Calendar,
-  Layers,
   ArrowUpDown
 } from 'lucide-react';
 
@@ -53,12 +48,7 @@ const Transactions = () => {
   const [editDate, setEditDate] = useState('');
 
   // Pre-defined categories list computed from transactions
-  const [categories, setCategories] = useState(['All']);
-
-  useEffect(() => {
-    const cats = ['All', ...new Set(transactions.map(t => t.category))];
-    setCategories(cats);
-  }, [transactions]);
+  const categories = ['All', ...new Set(transactions.map(t => t.category))];
 
   // Submit NLP
   const handleNlSubmit = (e) => {

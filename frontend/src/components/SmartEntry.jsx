@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Send, Sparkles, Trash2, Edit2, Check, X, Edit3 } from 'lucide-react';
+import { useState } from 'react';
+import { Send, Sparkles, Trash2, Edit2, Check, X } from 'lucide-react';
 import { parseEntry, getCategoryMeta } from '../utils/aiParser';
 import { useApp } from '../context/AppContext';
 
@@ -15,9 +15,6 @@ export default function SmartEntry() {
 
   const cur = currency || '₹';
 
-  useEffect(() => {
-    setRenameInput(filter !== 'all' ? filter : '');
-  }, [filter]);
 
   function handleInput(e) {
     const val = e.target.value;
@@ -145,14 +142,14 @@ export default function SmartEntry() {
               </div>
               <div style={{display:'flex', gap:'.5rem', flexWrap:'wrap'}}>
                 <button
-                  onClick={() => setFilter('all')}
+                  onClick={() => { setFilter('all'); setRenameInput(''); }}
                   className={`badge ${filter==='all'?'badge-blue':'badge-muted'}`}
                   style={{cursor:'pointer', border:'none', fontFamily:'var(--font)', padding:'.35rem .875rem'}}
                 >All</button>
                 {categories.map(cat => (
                   <button
                     key={cat}
-                    onClick={() => setFilter(cat)}
+                    onClick={() => { setFilter(cat); setRenameInput(cat); }}
                     className={`badge ${filter===cat?'badge-blue':'badge-muted'}`}
                     style={{cursor:'pointer', border:'none', fontFamily:'var(--font)', padding:'.35rem .875rem', textTransform:'capitalize'}}
                   >{cat}</button>

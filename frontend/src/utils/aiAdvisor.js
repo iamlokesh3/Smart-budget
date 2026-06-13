@@ -29,7 +29,7 @@ const KEYWORD_CATEGORY_MAP = {
   recharge: 'Bills & Utilities', internet: 'Bills & Utilities', wifi: 'Bills & Utilities',
   electricity: 'Bills & Utilities', power: 'Bills & Utilities', gas: 'Bills & Utilities',
   water: 'Bills & Utilities', rent: 'Bills & Utilities', mobile: 'Bills & Utilities',
-  phone: 'Bills & Utilities', subscription: 'Bills & Utilities', netflix: 'Bills & Utilities',
+  subscription: 'Bills & Utilities', netflix: 'Bills & Utilities',
   spotify: 'Bills & Utilities',
   
   // Gadgets & Tech
@@ -89,7 +89,7 @@ export const parseNaturalLanguageTransaction = (text) => {
   
   // 3. Extract Title & Category
   let category = type === 'income' ? 'Income' : 'Others';
-  let title = '';
+  let title;
   
   // Remove amount and common prepositions to find the title
   let titleText = cleanText
@@ -208,8 +208,8 @@ export const calculateFinancialHealthScore = (income, expenses, budget, goals) =
   // Bounds
   score = Math.max(0, Math.min(100, score));
   
-  let label = 'Average';
-  let color = 'var(--warning)';
+  let label;
+  let color;
   if (score >= 85) {
     label = 'Excellent';
     color = 'var(--success)';
@@ -331,7 +331,7 @@ This accounts for **${expenses > 0 ? Math.round((topAmt / expenses) * 100) : 0}%
     // Extract numbers to see purchase price
     const priceRegex = /([0-9,]+)/;
     const priceMatch = cleanQuery.match(priceRegex);
-    let purchaseName = 'laptop';
+    let purchaseName;
     if (cleanQuery.includes('laptop')) purchaseName = 'laptop';
     else if (cleanQuery.includes('car')) purchaseName = 'car';
     else if (cleanQuery.includes('phone') || cleanQuery.includes('iphone')) purchaseName = 'smartphone';

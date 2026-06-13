@@ -39,7 +39,6 @@ export default function Reports() {
     );
   }
 
-  const catBreakdown = groupByCategory(transactions);
   const monthlyBudget = budgets.find(b => b.type === 'Monthly');
 
   return (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Sparkles, TrendingUp, Shield, Zap, MessageSquare, Target, BarChart3, Bell, ChevronRight, Star } from 'lucide-react';
+import { Sparkles, TrendingUp, Shield, Zap, MessageSquare, Target, BarChart3, ChevronRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 const features = [

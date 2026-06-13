@@ -1,11 +1,10 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { 
   Plus, 
   PiggyBank, 
   Trash2, 
   Edit3, 
-  TrendingUp, 
   CheckCircle,
   X,
   Target

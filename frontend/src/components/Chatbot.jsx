@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Send, X, MessageSquare, Trash2, Plus, Bot } from 'lucide-react';
 import { generateResponse, SUGGESTED_PROMPTS } from '../utils/chatEngine';
 import { useApp } from '../context/AppContext';
@@ -25,24 +25,11 @@ function ChatInterface({ onClose, isFullPage, promptTrigger, onPromptTriggered }
   const bottomRef = useRef(null);
   const inputRef  = useRef(null);
 
-  const context = { transactions, budgets, goals, user };
+  const context = useMemo(() => ({ transactions, budgets, goals, user }), [transactions, budgets, goals, user]);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatHistory, typing]);
 
-  // Handle parent-triggered prompts (from sidebar)
-  useEffect(() => {
-    if (promptTrigger) {
-      send(promptTrigger);
-      onPromptTriggered?.();
-    }
-  }, [promptTrigger]);
-
-  // Welcome message
-  const messages = chatHistory.length === 0
-    ? [{ id: 'welcome', role: 'bot', text: `Hi ${user?.name?.split(' ')[0] || 'there'}! 👋 I'm your Smart Budget AI advisor. How can I help you today?`, time: new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'}) }]
-    : chatHistory;
-
-  function send(text) {
+  const send = useCallback((text) => {
     if (!text.trim()) return;
     const userMsg = { id: Date.now().toString(), role: 'user', text: text.trim(), time: new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'}) };
     addChatMessage(userMsg);
@@ -53,7 +40,21 @@ function ChatInterface({ onClose, isFullPage, promptTrigger, onPromptTriggered }
       const botText = generateResponse(text, context);
       addChatMessage({ id: (Date.now()+1).toString(), role: 'bot', text: botText, time: new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'}) });
     }, 600 + Math.random() * 400);
-  }
+  }, [addChatMessage, context]);
+
+  useEffect(() => {
+    if (promptTrigger) {
+      Promise.resolve().then(() => {
+        send(promptTrigger);
+      });
+      onPromptTriggered?.();
+    }
+  }, [promptTrigger, send, onPromptTriggered]);
+
+  // Welcome message
+  const messages = chatHistory.length === 0
+    ? [{ id: 'welcome', role: 'bot', text: `Hi ${user?.name?.split(' ')[0] || 'there'}! 👋 I'm your Smart Budget AI advisor. How can I help you today?`, time: new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'}) }]
+    : chatHistory;
 
   function handleKeyDown(e) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(input); }

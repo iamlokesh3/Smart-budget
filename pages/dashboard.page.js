@@ -9,10 +9,10 @@ class DashboardPage extends BasePage {
   
   // Dashboard indicators
   get dashboardTitle() { return '//android.widget.TextView[@text="Dashboard"]'; }
-  get welcomeMessage() { return 'id=com.example.app:id/welcome_msg'; }
-  get actionGrid() { return 'id=com.example.app:id/action_grid'; }
-  get financialHealthScore() { return 'id=com.example.app:id/health_score'; }
-  get profileName() { return 'id=com.example.app:id/profile_name'; }
+  get welcomeMessage() { return 'id=com.iamlokesh.smartbudget:id/welcome_msg'; }
+  get actionGrid() { return 'id=com.iamlokesh.smartbudget:id/action_grid'; }
+  get financialHealthScore() { return 'id=com.iamlokesh.smartbudget:id/health_score'; }
+  get profileName() { return 'id=com.iamlokesh.smartbudget:id/profile_name'; }
 
   /**
    * Checks if Dashboard page is loaded

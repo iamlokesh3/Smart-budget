@@ -4,7 +4,7 @@
 const EMOJI_MAP = {
   pizza: '🍕', burger: '🍔', food: '🍕', dinner: '🍽️', lunch: '🍱', breakfast: '🍳', restaurant: '🍽️', cafe: '☕', coffee: '☕', tea: '☕', chai: '☕', drink: '🥤', juice: '🥤', bar: '🍺',
   uber: '🚗', ola: '🚗', auto: '🚗', cab: '🚗', taxi: '🚗', bus: '🚌', train: '🚂', metro: '🚇', petrol: '⛽', fuel: '⛽', flight: '✈️', ticket: '🎫', travel: '✈️', ride: '🚗',
-  shoes: '👟', shoes: '👟', shirt: '👕', clothes: '👕', dress: '👗', shopping: '🛍️', amazon: '🛍️', flipkart: '🛍️', bag: '👜', watch: '⌚', gift: '🎁',
+  shoes: '👟', shirt: '👕', clothes: '👕', dress: '👗', shopping: '🛍️', amazon: '🛍️', flipkart: '🛍️', bag: '👜', watch: '⌚', gift: '🎁',
   books: '📚', course: '📚', class: '📚', tuition: '📚', fee: '💵', college: '🏫', school: '🏫', study: '📝', exam: '📝', pen: '✏️', book: '📚',
   medicine: '💊', doctor: '👨‍⚕️', hospital: '🏥', clinic: '🏥', pharmacy: '🏥', gym: '💪', yoga: '🧘', health: '❤️', medical: '💊', dentist: '🦷',
   movie: '🎬', cinema: '🎬', netflix: '📺', spotify: '🎵', game: '🎮', party: '🥳', concert: '🎸', entertainment: '🎬', prime: '📺', youtube: '📺',
@@ -64,7 +64,7 @@ function getSmartEmoji(categoryName) {
   return '🏷️';
 }
 
-function cleanDescription(text, amount) {
+function cleanDescription(text) {
   // Strip amount and common patterns
   let cleaned = text
     .replace(/[₹$€£¥₩]\s*\d+(?:,\d{3})*(?:\.\d{1,2})?/g, '')
@@ -87,12 +87,12 @@ export function parseEntry(text) {
   const amount = extractAmount(text);
   if (!amount || amount <= 0) return null;
 
-  const cleaned = cleanDescription(text, amount);
+  const cleaned = cleanDescription(text);
   if (cleaned.length < 2) return null;
 
   // Rules to extract Category and Title
-  let category = '';
-  let title = '';
+  let category;
+  let title;
 
   // Look for prepositions: "on", "for", "at", "to"
   const onMatch = cleaned.match(/(.+?)\s+on\s+(.+)/i);

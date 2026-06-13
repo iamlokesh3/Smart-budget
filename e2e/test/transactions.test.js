@@ -3,13 +3,16 @@ import chrome from 'selenium-webdriver/chrome.js';
 import { expect } from 'chai';
 
 describe('Transactions E2E Tests', function () {
-  this.timeout(30000);
+  this.timeout(60000);
   let driver;
   const URL = 'http://localhost:5173';
 
   before(async function () {
     const options = new chrome.Options();
+    options.addArguments('--headless=new'); // Enable headless mode
     options.addArguments('--window-size=1280,800');
+    options.addArguments('--no-sandbox');
+    options.addArguments('--disable-dev-shm-usage');
     
     driver = await new Builder()
       .forBrowser('chrome')

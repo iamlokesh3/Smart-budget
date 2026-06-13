@@ -1,4 +1,4 @@
-import { Bell, Moon, Sun, Menu, Search } from 'lucide-react';
+import { Bell, Moon, Sun, Menu } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 const pageTitles = {

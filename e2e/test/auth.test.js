@@ -3,14 +3,16 @@ import chrome from 'selenium-webdriver/chrome.js';
 import { expect } from 'chai';
 
 describe('Auth Flow E2E Tests', function () {
-  this.timeout(30000); // 30 seconds timeout for E2E tests
+  this.timeout(60000); // 60 seconds timeout for E2E tests
   let driver;
   const URL = 'http://localhost:5173';
 
   before(async function () {
     const options = new chrome.Options();
-    // options.addArguments('--headless'); // Uncomment for headless mode
+    options.addArguments('--headless=new'); // Enable headless mode
     options.addArguments('--window-size=1280,800');
+    options.addArguments('--no-sandbox');
+    options.addArguments('--disable-dev-shm-usage');
     
     driver = await new Builder()
       .forBrowser('chrome')

@@ -234,6 +234,43 @@ export async function generateExcelReport(data) {
     });
   });
 
+  // -------------------------------------------------------------
+  // Sheet 5: Performance Metrics
+  // -------------------------------------------------------------
+  const perfSheet = workbook.addWorksheet('Performance Metrics', { views: [{ showGridLines: true }] });
+  
+  perfSheet.columns = [
+    { header: 'Timestamp', key: 'timestamp', width: 22 },
+    { header: 'Metric Name', key: 'metricName', width: 25 },
+    { header: 'Target Component', key: 'targetComponent', width: 35 },
+    { header: 'Value / Duration', key: 'value', width: 20 },
+    { header: 'Remarks', key: 'remarks', width: 45 }
+  ];
+
+  const perfData = data.performance || [];
+  perfData.forEach((perf) => {
+    perfSheet.addRow({
+      timestamp: perf.timestamp,
+      metricName: perf.metricName,
+      targetComponent: perf.targetComponent,
+      value: perf.value,
+      remarks: perf.remarks
+    });
+  });
+
+  perfSheet.getRow(1).eachCell((cell) => {
+    cell.fill = headerFill;
+    cell.font = headerFont;
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  });
+
+  perfSheet.eachRow({ includeHeader: false }, (row) => {
+    row.eachCell((cell) => {
+      cell.border = borderStyle;
+      cell.alignment = { vertical: 'middle', horizontal: 'left' };
+    });
+  });
+
   // Write Excel file
   await workbook.xlsx.writeFile(filePath);
   logger.info(`Excel Report generated successfully at: ${filePath}`);
@@ -258,29 +295,52 @@ if (process.argv[1] && process.argv[1].endsWith('report.generator.js')) {
     // Generate dummy test results to verify compile works out-of-the-box
     const dummyData = {
       summary: {
-        executionDate: new Date().toISOString(),
-        deviceName: 'Android Emulator',
+        executionDate: new Date().toLocaleString(),
+        deviceName: 'Android Emulator (Pixel 6)',
         androidVersion: '13.0',
-        totalTests: 4,
-        passed: 3,
-        failed: 1,
+        totalTests: 17,
+        passed: 17,
+        failed: 0,
         skipped: 0,
-        passPercentage: 75.0,
-        executionDuration: '00:01:24'
+        passPercentage: 100.0,
+        executionDuration: '00:03:45'
       },
       tests: [
-        { id: 'TC001', module: 'Auth', scenario: 'Validate Invalid Login Credentials', device: 'Pixel 6', status: 'Passed', startTime: '12:00:00', endTime: '12:00:15', duration: '15s' },
-        { id: 'TC002', module: 'Auth', scenario: 'Validate Successful User Login', device: 'Pixel 6', status: 'Passed', startTime: '12:00:15', endTime: '12:00:35', duration: '20s' },
-        { id: 'TC003', module: 'Form', scenario: 'Validate Form Rules and Submissions', device: 'Pixel 6', status: 'Failed', startTime: '12:00:35', endTime: '12:01:10', duration: '35s' },
-        { id: 'TC004', module: 'UI', scenario: 'Validate Swipe Gestures & Tabs', device: 'Pixel 6', status: 'Passed', startTime: '12:01:10', endTime: '12:01:24', duration: '14s' }
+        { id: 'TC001', module: 'Auth', scenario: 'TC_AUTH_001 - Should validate empty username input', device: 'Pixel 6', status: 'Passed', startTime: '10:00:01', endTime: '10:00:08', duration: '7.12s' },
+        { id: 'TC002', module: 'Auth', scenario: 'TC_AUTH_002 - Should validate empty password input', device: 'Pixel 6', status: 'Passed', startTime: '10:00:08', endTime: '10:00:14', duration: '6.45s' },
+        { id: 'TC003', module: 'Auth', scenario: 'TC_AUTH_003 - Should validate invalid credentials and error banners', device: 'Pixel 6', status: 'Passed', startTime: '10:00:14', endTime: '10:00:23', duration: '8.92s' },
+        { id: 'TC004', module: 'Auth', scenario: 'TC_AUTH_004 - Should perform successful user login & dashboard navigation', device: 'Pixel 6', status: 'Passed', startTime: '10:00:23', endTime: '10:00:36', duration: '13.15s' },
+        { id: 'TC005', module: 'Auth', scenario: 'TC_AUTH_005 - Should verify session persistence on app relaunch', device: 'Pixel 6', status: 'Passed', startTime: '10:00:36', endTime: '10:00:46', duration: '9.80s' },
+        { id: 'TC006', module: 'Auth', scenario: 'TC_AUTH_006 - Should validate logout and return to login screen', device: 'Pixel 6', status: 'Passed', startTime: '10:00:46', endTime: '10:00:54', duration: '8.10s' },
+        
+        { id: 'TC007', module: 'Form', scenario: 'TC_FORM_001 - Should validate incorrect email format', device: 'Pixel 6', status: 'Passed', startTime: '10:00:54', endTime: '10:01:05', duration: '10.50s' },
+        { id: 'TC008', module: 'Form', scenario: 'TC_FORM_002 - Should validate phone numbers constraints', device: 'Pixel 6', status: 'Passed', startTime: '10:01:05', endTime: '10:01:14', duration: '9.22s' },
+        { id: 'TC009', module: 'Form', scenario: 'TC_FORM_003 - Should validate password strength requirement checks', device: 'Pixel 6', status: 'Passed', startTime: '10:01:14', endTime: '10:01:25', duration: '11.08s' },
+        { id: 'TC010', module: 'Form', scenario: 'TC_FORM_004 - Should validate mandatory checkbox selections', device: 'Pixel 6', status: 'Passed', startTime: '10:01:25', endTime: '10:01:34', duration: '8.75s' },
+        { id: 'TC011', module: 'Form', scenario: 'TC_FORM_005 - Should submit form successfully with valid inputs, dates, & dropdowns', device: 'Pixel 6', status: 'Passed', startTime: '10:01:34', endTime: '10:01:52', duration: '17.65s' },
+        
+        { id: 'TC012', module: 'UI', scenario: 'TC_UI_001 - Should perform and validate Swipe gestures', device: 'Pixel 6', status: 'Passed', startTime: '10:01:52', endTime: '10:02:04', duration: '12.30s' },
+        { id: 'TC013', module: 'UI', scenario: 'TC_UI_002 - Should perform Double Tap & Long Press on target controls', device: 'Pixel 6', status: 'Passed', startTime: '10:02:04', endTime: '10:02:18', duration: '13.90s' },
+        { id: 'TC014', module: 'UI', scenario: 'TC_UI_003 - Should scroll RecyclerView layout until a target card is visible', device: 'Pixel 6', status: 'Passed', startTime: '10:02:18', endTime: '10:02:35', duration: '17.40s' },
+        { id: 'TC015', module: 'UI', scenario: 'TC_UI_004 - Should perform Drag and Drop operations', device: 'Pixel 6', status: 'Passed', startTime: '10:02:35', endTime: '10:02:49', duration: '14.15s' },
+        { id: 'TC016', module: 'UI', scenario: 'TC_UI_005 - Should perform Pinch & Zoom gestures on visual analytics components', device: 'Pixel 6', status: 'Passed', startTime: '10:02:49', endTime: '10:03:04', duration: '15.20s' },
+        { id: 'TC017', module: 'UI', scenario: 'TC_UI_006 - Should assert alerts, toasts, snackbars, and progress bar state transitions', device: 'Pixel 6', status: 'Passed', startTime: '10:03:04', endTime: '10:03:22', duration: '17.80s' }
       ],
-      failures: [
-        { name: 'Validate Form Rules and Submissions', reason: 'AssertionError: expected field to be empty but got "John Doe"', screenshotPath: 'reports/failures/TC003_failed.png', device: 'Pixel 6', androidVersion: '13.0', activityName: 'com.example.app.FormActivity' }
-      ],
+      failures: [],
       logs: [
-        { timestamp: new Date().toISOString(), testName: 'Validate Invalid Login Credentials', step: 'Enter empty username', result: 'SUCCESS', remarks: 'Validation message triggered' },
-        { timestamp: new Date().toISOString(), testName: 'Validate Successful User Login', step: 'Enter correct password', result: 'SUCCESS', remarks: 'Logged into dashboard' },
-        { timestamp: new Date().toISOString(), testName: 'Validate Form Rules and Submissions', step: 'Validate phone characters', result: 'FAILED', remarks: 'Failed to trigger invalid chars check' }
+        { timestamp: new Date().toISOString(), testName: 'TC_AUTH_001', step: 'Validate Username Input Warning', result: 'SUCCESS', remarks: 'Assertion verified: "Username is required"' },
+        { timestamp: new Date().toISOString(), testName: 'TC_AUTH_004', step: 'User Authentication & Login', result: 'SUCCESS', remarks: 'Dashboard loaded successfully' },
+        { timestamp: new Date().toISOString(), testName: 'TC_FORM_005', step: 'Select custom calendar picker day', result: 'SUCCESS', remarks: 'Date selected: 15' },
+        { timestamp: new Date().toISOString(), testName: 'TC_FORM_005', step: 'Form Submission', result: 'SUCCESS', remarks: 'Captured toast: "Form Submitted Successfully"' },
+        { timestamp: new Date().toISOString(), testName: 'TC_UI_001', step: 'Perform Swipe Gestures', result: 'SUCCESS', remarks: 'Swiped Left and Swiped Right successfully' },
+        { timestamp: new Date().toISOString(), testName: 'TC_UI_003', step: 'Scroll Recycler List', result: 'SUCCESS', remarks: 'Found element: Transaction ID: #4829' }
+      ],
+      performance: [
+        { timestamp: new Date().toISOString(), metricName: 'App Launch Time', targetComponent: 'System/Driver Initializer', value: '4521ms', remarks: 'Successfully initialized driver' },
+        { timestamp: new Date().toISOString(), metricName: 'Screen Load Time', targetComponent: 'Dashboard Page', value: '1850ms', remarks: 'Dashboard loaded successfully after authentication' },
+        { timestamp: new Date().toISOString(), metricName: 'Screen Load Time', targetComponent: 'Form Page', value: '620ms', remarks: 'Form page loaded successfully' },
+        { timestamp: new Date().toISOString(), metricName: 'API Response Delay', targetComponent: 'Form Submission Service', value: '430ms', remarks: 'Form submission API response delay' },
+        { timestamp: new Date().toISOString(), metricName: 'Crash Event', targetComponent: 'Validate Auth Form Rules', value: 'NONE', remarks: 'No crash detected' }
       ]
     };
     logger.info('No raw results found, writing template Mobile_E2E_Report.xlsx');

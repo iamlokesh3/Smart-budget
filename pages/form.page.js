@@ -15,10 +15,10 @@ class FormPage extends BasePage {
   get submitButton() { return '~form_submit_button'; }
 
   // Field error indicators
-  get emailError() { return 'id=com.example.app:id/email_error'; }
-  get phoneError() { return 'id=com.example.app:id/phone_error'; }
-  get passwordError() { return 'id=com.example.app:id/password_strength_error'; }
-  get checkboxError() { return 'id=com.example.app:id/checkbox_error'; }
+  get emailError() { return 'id=com.iamlokesh.smartbudget:id/email_error'; }
+  get phoneError() { return 'id=com.iamlokesh.smartbudget:id/phone_error'; }
+  get passwordError() { return 'id=com.iamlokesh.smartbudget:id/password_strength_error'; }
+  get checkboxError() { return 'id=com.iamlokesh.smartbudget:id/checkbox_error'; }
 
   /**
    * Selects an item from standard Android Spinner/Dropdown dialogs

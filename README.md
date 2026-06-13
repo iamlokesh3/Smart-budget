@@ -156,6 +156,7 @@ A professional, multi-sheet workbook `excel/Mobile_E2E_Report.xlsx` is created o
 - **Sheet 2 - Test Cases**: Log of each scenario status, duration, and test suite context.
 - **Sheet 3 - Failed Tests**: Failure assertions, stack trace strings, and references to failure screenshots.
 - **Sheet 4 - Execution Logs**: Chronological log of steps and remarks.
+- **Sheet 5 - Performance Metrics**: Timestamps, metric names (App Launch Time, Screen Load Time, API Response Delay, Crash Event), target components, values, and remarks.
 
 ### 3. Failure Captures
 If a test fails, the framework automatically extracts:

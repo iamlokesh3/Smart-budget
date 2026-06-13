@@ -31,8 +31,28 @@ export const executionResults = {
   },
   tests: [],
   failures: [],
-  logs: []
+  logs: [],
+  performance: []
 };
+
+/**
+ * Records a performance validation metric
+ * @param {string} metricName - Name of the metric
+ * @param {string} targetComponent - Screen or element targeted
+ * @param {string|number} value - Timed duration or event value
+ * @param {string} remarks - Additional status or comments
+ */
+export function recordPerformanceMetric(metricName, targetComponent, value, remarks = 'Normal') {
+  const timestamp = new Date().toISOString();
+  executionResults.performance.push({
+    timestamp,
+    metricName,
+    targetComponent,
+    value: typeof value === 'number' ? `${value}ms` : value,
+    remarks
+  });
+  logger.info(`[PERF METRIC] ${metricName} for ${targetComponent}: ${value} (${remarks})`);
+}
 
 let startTime;
 
@@ -42,7 +62,9 @@ before(async function () {
   startTime = Date.now();
   
   // Initialize the driver
+  const startLaunch = Date.now();
   const driver = await driverFactory.initDriver();
+  const launchDuration = Date.now() - startLaunch;
   
   // Cache device information for report
   try {
@@ -52,6 +74,8 @@ before(async function () {
   } catch (err) {
     logger.warn('Failed to retrieve device capabilities for report summary.');
   }
+
+  recordPerformanceMetric('App Launch Time', 'System/Driver Initializer', launchDuration, `Successfully initialized driver on ${executionResults.summary.deviceName}`);
 });
 
 beforeEach(function () {
@@ -109,28 +133,41 @@ afterEach(async function () {
     const logsPath = path.join(failuresDir, `${safeTitle}_logcat.log`);
     
     let currentActivity = 'Unknown';
+    let isCrash = false;
+    let crashDetails = 'Assertion or expectation failure';
+
     try {
       currentActivity = await driver.getCurrentActivity();
+      if (currentActivity && (currentActivity.includes('Crash') || currentActivity.includes('error') || currentActivity.includes('ANR'))) {
+        isCrash = true;
+        crashDetails = `Active Android crash dialog or window: ${currentActivity}`;
+      }
     } catch (e) {
+      isCrash = true;
+      crashDetails = `Application driver connection lost (suspected app crash): ${e.message}`;
       logger.warn(`Could not fetch current activity on failure: ${e.message}`);
     }
 
     // Capture screenshot
-    try {
-      await driver.saveScreenshot(screenshotPath);
-      logger.info(`Screenshot captured for failed test: ${screenshotPath}`);
-    } catch (err) {
-      logger.error(`Failed to capture screenshot: ${err.message}`);
+    if (!isCrash || driver) {
+      try {
+        await driver.saveScreenshot(screenshotPath);
+        logger.info(`Screenshot captured for failed test: ${screenshotPath}`);
+      } catch (err) {
+        logger.error(`Failed to capture screenshot: ${err.message}`);
+      }
     }
 
     // Capture logcat logs
-    try {
-      const logs = await driver.getLogs('logcat');
-      const logString = logs.map(l => `[${new Date(l.timestamp).toISOString()}] [${l.level}] ${l.message}`).join('\n');
-      fs.writeFileSync(logsPath, logString);
-      logger.info(`Logcat logs dumped to: ${logsPath}`);
-    } catch (err) {
-      logger.warn(`Failed to capture logcat logs: ${err.message}`);
+    if (!isCrash || driver) {
+      try {
+        const logs = await driver.getLogs('logcat');
+        const logString = logs.map(l => `[${new Date(l.timestamp).toISOString()}] [${l.level}] ${l.message}`).join('\n');
+        fs.writeFileSync(logsPath, logString);
+        logger.info(`Logcat logs dumped to: ${logsPath}`);
+      } catch (err) {
+        logger.warn(`Failed to capture logcat logs: ${err.message}`);
+      }
     }
 
     executionResults.failures.push({
@@ -149,6 +186,8 @@ afterEach(async function () {
       result: 'FAILED',
       remarks: `Error: ${errMessage}. Activity: ${currentActivity}. Stack: ${errStack}`
     });
+
+    recordPerformanceMetric('Crash Event', testTitle, isCrash ? 'CRASH' : 'NONE', isCrash ? crashDetails : 'Test failed but app is running');
   } else {
     executionResults.logs.push({
       timestamp: new Date().toISOString(),
@@ -157,6 +196,8 @@ afterEach(async function () {
       result: 'SUCCESS',
       remarks: 'All assertions verified'
     });
+
+    recordPerformanceMetric('Crash Event', testTitle, 'NONE', 'No crash detected');
   }
 });
 

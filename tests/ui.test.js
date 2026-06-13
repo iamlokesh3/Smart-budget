@@ -34,7 +34,7 @@ describe('Mobile UI Components and Gesture Tests', function () {
 
   it('TC_UI_002 - Should perform Double Tap & Long Press on target controls', async function () {
     // Locate target widget (e.g. quick expense card or quick menu item)
-    const quickMetricCard = 'id=com.example.app:id/quick_metric_card';
+    const quickMetricCard = 'id=com.iamlokesh.smartbudget:id/quick_metric_card';
     
     logger.info('Executing Double Tap on card element...');
     const cardElement = await dashboardPage.waitForVisible(quickMetricCard);
@@ -54,8 +54,8 @@ describe('Mobile UI Components and Gesture Tests', function () {
   });
 
   it('TC_UI_004 - Should perform Drag and Drop operations', async function () {
-    const sourceWidget = 'id=com.example.app:id/drag_source';
-    const targetWidget = 'id=com.example.app:id/drag_target';
+    const sourceWidget = 'id=com.iamlokesh.smartbudget:id/drag_source';
+    const targetWidget = 'id=com.iamlokesh.smartbudget:id/drag_target';
     
     logger.info('Waiting for draggable components...');
     const source = await dashboardPage.waitForVisible(sourceWidget);
@@ -66,7 +66,7 @@ describe('Mobile UI Components and Gesture Tests', function () {
   });
 
   it('TC_UI_005 - Should perform Pinch & Zoom gestures on visual analytics components', async function () {
-    const analyticsChart = 'id=com.example.app:id/savings_progress_chart';
+    const analyticsChart = 'id=com.iamlokesh.smartbudget:id/savings_progress_chart';
     
     logger.info('Locating analytics graph component...');
     const chart = await dashboardPage.waitForVisible(analyticsChart);
@@ -80,8 +80,8 @@ describe('Mobile UI Components and Gesture Tests', function () {
 
   it('TC_UI_006 - Should assert alerts, toasts, snackbars, and progress bar state transitions', async function () {
     // Trigger loading spinner overlay
-    const refreshBtn = 'id=com.example.app:id/refresh_dashboard_btn';
-    const progressBar = 'id=com.example.app:id/dashboard_progress_bar';
+    const refreshBtn = 'id=com.iamlokesh.smartbudget:id/refresh_dashboard_btn';
+    const progressBar = 'id=com.iamlokesh.smartbudget:id/dashboard_progress_bar';
     
     logger.info('Clicking Refresh to trigger loading dialogs...');
     await dashboardPage.clickElement(refreshBtn);

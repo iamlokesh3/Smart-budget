@@ -5,6 +5,7 @@ import loginPage from '../pages/login.page.js';
 import dashboardPage from '../pages/dashboard.page.js';
 import formPage from '../pages/form.page.js';
 import { logger } from '../utilities/logger.js';
+import { recordPerformanceMetric } from './setup.js';
 
 const testData = JSON.parse(fs.readFileSync(path.resolve('testdata/userdata.json'), 'utf8'));
 
@@ -15,7 +16,10 @@ describe('Form Validation E2E Tests', function () {
     // Authenticate first and navigate to forms module
     logger.info('Authenticating to reach form validations...');
     await loginPage.login(testData.auth.validCredentials.username, testData.auth.validCredentials.password);
+    const startFormLoad = Date.now();
     await dashboardPage.navigateToForms();
+    const formLoadTime = Date.now() - startFormLoad;
+    recordPerformanceMetric('Screen Load Time', 'Form Page', formLoadTime, 'Form page loaded successfully');
   });
 
   after(async function () {
@@ -77,10 +81,13 @@ describe('Form Validation E2E Tests', function () {
     logger.info('Testing date picker and calendar views...');
     await formPage.setCalendarDay('15');
     
+    const startSubmit = Date.now();
     await formPage.submit();
     
     // Capture toast notification confirmation
     const toastMsg = await formPage.getToastMessage();
+    const apiDelay = Date.now() - startSubmit;
+    recordPerformanceMetric('API Response Delay', 'Form Submission Service', apiDelay, `Form submission API response delay. Toast: "${toastMsg}"`);
     expect(toastMsg).to.contain('Form Submitted Successfully');
   });
 });
