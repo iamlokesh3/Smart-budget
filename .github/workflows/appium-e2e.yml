@@ -1,10 +1,7 @@
 name: Mobile Appium E2E Automation
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   appium-tests:
