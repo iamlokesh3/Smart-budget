@@ -60,9 +60,17 @@ jobs:
           mkdir -p e2e/reports
           python e2e/e2e_tests.py > e2e/reports/python-web-e2e.log 2>&1 || PYTHON_FAILED=true
 
+          # 5.5. Install root dependencies and generate unified Excel report for Web & Security
+          npm install
+          node e2e/generate_web_report.js || true
+
           # 6. Exit with error if either failed
           if [ "$JS_FAILED" = "true" ] || [ "$PYTHON_FAILED" = "true" ]; then
             echo "One or more E2E test suites failed!"
+            echo "=== JS Test Report JSON ==="
+            cat e2e/reports/js-web-e2e.json || true
+            echo "=== Python Test Log ==="
+            cat e2e/reports/python-web-e2e.log || true
             exit 1
           fi
         env:
@@ -73,5 +81,7 @@ jobs:
         if: always()
         with:
           name: Selenium-Web-E2E-Reports
-          path: e2e/reports/
+          path: |
+            e2e/reports/
+            excel/Web_E2E_Report.xlsx
           retention-days: 14
