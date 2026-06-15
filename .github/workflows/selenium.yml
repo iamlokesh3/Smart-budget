@@ -1,0 +1,63 @@
+name: Web Selenium E2E Automation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  selenium-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Root Dependencies
+        run: npm install
+
+      - name: Start Express Backend
+        run: |
+          cd backend
+          npm install
+          npm start > ../backend.log 2>&1 &
+          cd ..
+
+      - name: Start Vite Frontend
+        run: |
+          cd frontend
+          npm install
+          npm run dev -- --host > ../frontend.log 2>&1 &
+          cd ..
+
+      - name: Wait for Servers
+        run: |
+          npx wait-on -t 30000 tcp:127.0.0.1:5000 tcp:127.0.0.1:5173 || {
+            echo "Backend log:"
+            cat backend.log || true
+            echo "Frontend log:"
+            cat frontend.log || true
+            exit 1
+          }
+
+      - name: Run Selenium Tests
+        run: npm run test:selenium || true  # Don't fail the build so the report step can run
+
+      - name: Upload Selenium Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: selenium-execution-results
+          path: |
+            reports/selenium-report.html
+            reports/selenium-report.json
+            screenshots/selenium_logout_failure.png
+          retention-days: 7

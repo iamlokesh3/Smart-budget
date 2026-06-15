@@ -1,0 +1,54 @@
+name: Security Vulnerability Automation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  security-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Root Dependencies
+        run: npm install
+
+      - name: Start Express Backend
+        run: |
+          cd backend
+          npm install
+          npm start > ../backend.log 2>&1 &
+          cd ..
+
+      - name: Wait for Backend
+        run: |
+          npx wait-on -t 30000 tcp:127.0.0.1:5000 || {
+            echo "Backend logs:"
+            cat backend.log || true
+            exit 1
+          }
+
+      - name: Run Security Tests
+        run: npm run test:security || true
+
+      - name: Upload Security Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-execution-results
+          path: |
+            reports/security-report.html
+            reports/security-report.json
+            screenshots/tls_compliance_failure.png
+          retention-days: 7

@@ -1,0 +1,430 @@
+{
+  "stats": {
+    "suites": 3,
+    "tests": 10,
+    "passes": 10,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-06-15T08:34:25.659Z",
+    "end": "2026-06-15T08:36:33.423Z",
+    "duration": 127764,
+    "testsRegistered": 10,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "c8237880-80ff-4624-bfb4-c31bb4b7b133",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "54b75b13-9278-43ee-890a-5c02941c5999",
+          "title": "Auth Flow E2E Tests",
+          "fullFile": "C:\\Users\\lokes\\Downloads\\smart-budget-v3\\e2e\\test\\auth.test.js",
+          "file": "\\test\\auth.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Auth Flow E2E Tests\"",
+              "fullTitle": "Auth Flow E2E Tests \"before all\" hook in \"Auth Flow E2E Tests\"",
+              "timedOut": false,
+              "duration": 1045,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments('--headless=new'); // Enable headless mode\noptions.addArguments('--window-size=1280,800');\noptions.addArguments('--no-sandbox');\noptions.addArguments('--disable-dev-shm-usage');\n\ndriver = await new Builder()\n  .forBrowser('chrome')\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "ff0b9064-a7e6-4873-bccc-a6bf4ac9a179",
+              "parentUUID": "54b75b13-9278-43ee-890a-5c02941c5999",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Auth Flow E2E Tests\"",
+              "fullTitle": "Auth Flow E2E Tests \"after all\" hook in \"Auth Flow E2E Tests\"",
+              "timedOut": false,
+              "duration": 139,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "a1aa43e1-2304-44a3-82dc-897b22b8fb34",
+              "parentUUID": "54b75b13-9278-43ee-890a-5c02941c5999",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should load the landing page",
+              "fullTitle": "Auth Flow E2E Tests should load the landing page",
+              "timedOut": false,
+              "duration": 33181,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(URL);\nconst title = await driver.getTitle();\nexpect(title).to.include('Smart Budget');\n// Look for the \"Your Personal AI Financial Advisor\" text\nconst heading = await driver.findElement(By.css('h1')).getText();\nexpect(heading).to.include('Your Personal AI');",
+              "err": {},
+              "uuid": "bc37cba3-4948-42c7-931f-7c20fe10554a",
+              "parentUUID": "54b75b13-9278-43ee-890a-5c02941c5999",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should navigate to the auth page",
+              "fullTitle": "Auth Flow E2E Tests should navigate to the auth page",
+              "timedOut": false,
+              "duration": 371,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Click \"Get Started\" button\nconst btn = await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), \"Get Started\")]')), 5000);\nawait driver.wait(until.elementIsVisible(btn), 5000);\nawait btn.click();\n// Verify auth page loaded by checking for the \"Sign In\" or \"Create Account\" elements\nawait driver.wait(until.elementLocated(By.className('auth-card')), 5000);\nconst authTabs = await driver.findElements(By.className('auth-tab'));\nexpect(authTabs.length).to.equal(2);",
+              "err": {},
+              "uuid": "02aff051-f805-4ac4-a279-7f1017d05290",
+              "parentUUID": "54b75b13-9278-43ee-890a-5c02941c5999",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should simulate a login attempt",
+              "fullTitle": "Auth Flow E2E Tests should simulate a login attempt",
+              "timedOut": false,
+              "duration": 1884,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Fill out the email input\nconst emailInput = await driver.wait(until.elementLocated(By.css('input[type=\"email\"]')), 5000);\nawait emailInput.sendKeys('lokeshmk436@gmail.com');\n// Fill out password\nconst pwInput = await driver.wait(until.elementLocated(By.css('input[type=\"password\"]')), 5000);\nawait pwInput.sendKeys('password123');\n// Submit\nconst submitBtn = await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), \"Sign In\")]')), 5000);\nawait driver.wait(until.elementIsVisible(submitBtn), 5000);\nawait submitBtn.click();\n// Wait for dashboard to load (checking for welcome text or action grid)\nconst dashboardGrid = await driver.wait(until.elementLocated(By.className('action-grid')), 5000);\nexpect(dashboardGrid).to.not.be.null;",
+              "err": {},
+              "uuid": "06338c6d-956a-4ae0-949f-dcab48cab298",
+              "parentUUID": "54b75b13-9278-43ee-890a-5c02941c5999",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "bc37cba3-4948-42c7-931f-7c20fe10554a",
+            "02aff051-f805-4ac4-a279-7f1017d05290",
+            "06338c6d-956a-4ae0-949f-dcab48cab298"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 35436,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        },
+        {
+          "uuid": "77e71509-96e5-41f3-abc7-d94d009697a7",
+          "title": "Transactions E2E Tests",
+          "fullFile": "C:\\Users\\lokes\\Downloads\\smart-budget-v3\\e2e\\test\\transactions.test.js",
+          "file": "\\test\\transactions.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Transactions E2E Tests\"",
+              "fullTitle": "Transactions E2E Tests \"before all\" hook in \"Transactions E2E Tests\"",
+              "timedOut": false,
+              "duration": 1112,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments('--headless=new'); // Enable headless mode\noptions.addArguments('--window-size=1280,800');\noptions.addArguments('--no-sandbox');\noptions.addArguments('--disable-dev-shm-usage');\n\ndriver = await new Builder()\n  .forBrowser('chrome')\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "5ac90c16-88d4-4d2f-a17e-67c342ee2753",
+              "parentUUID": "77e71509-96e5-41f3-abc7-d94d009697a7",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Transactions E2E Tests\"",
+              "fullTitle": "Transactions E2E Tests \"after all\" hook in \"Transactions E2E Tests\"",
+              "timedOut": false,
+              "duration": 162,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "045cea1c-f0e5-4617-aa26-98e466cd8926",
+              "parentUUID": "77e71509-96e5-41f3-abc7-d94d009697a7",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should log in to access the dashboard",
+              "fullTitle": "Transactions E2E Tests should log in to access the dashboard",
+              "timedOut": false,
+              "duration": 22975,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(URL);\nconst loginBtn = await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), \"Login\")]')), 5000);\nawait driver.wait(until.elementIsVisible(loginBtn), 5000);\nawait loginBtn.click();\nawait driver.wait(until.elementLocated(By.className('auth-card')), 5000);\nconst emailInput = await driver.wait(until.elementLocated(By.css('input[type=\"email\"]')), 5000);\nawait emailInput.sendKeys('lokeshmk436@gmail.com');\nconst pwInput = await driver.wait(until.elementLocated(By.css('input[type=\"password\"]')), 5000);\nawait pwInput.sendKeys('password123');\nconst submitBtn = await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), \"Sign In\")]')), 5000);\nawait driver.wait(until.elementIsVisible(submitBtn), 5000);\nawait submitBtn.click();\nconst dashboardGrid = await driver.wait(until.elementLocated(By.className('action-grid')), 5000);\nexpect(dashboardGrid).to.not.be.null;",
+              "err": {},
+              "uuid": "dcba091f-da9b-49f6-abf7-d122d34cf92d",
+              "parentUUID": "77e71509-96e5-41f3-abc7-d94d009697a7",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should navigate to Smart Entries page",
+              "fullTitle": "Transactions E2E Tests should navigate to Smart Entries page",
+              "timedOut": false,
+              "duration": 593,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Click the Smart Entries card on the dashboard\nconst entriesCard = await driver.wait(until.elementLocated(By.xpath('//h4[text()=\"Smart Entries\"]/..')), 5000);\nawait driver.wait(until.elementIsVisible(entriesCard), 5000);\nawait entriesCard.click();\n// Verify we are on the entries page\nconst pageHeader = await driver.wait(until.elementLocated(By.css('.page-header h2')), 5000);\nconst text = await pageHeader.getText();\nexpect(text).to.include('Smart Entries');",
+              "err": {},
+              "uuid": "fd787558-5488-4152-9184-0826be2e2533",
+              "parentUUID": "77e71509-96e5-41f3-abc7-d94d009697a7",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should add a new natural language transaction",
+              "fullTitle": "Transactions E2E Tests should add a new natural language transaction",
+              "timedOut": false,
+              "duration": 1640,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const inputField = await driver.wait(until.elementLocated(By.className('entry-input')), 5000);\nawait driver.wait(until.elementIsVisible(inputField), 5000);\nawait inputField.sendKeys('Spent ₹450 on concert tickets');\nconst submitBtn = await driver.wait(until.elementLocated(By.className('entry-submit-btn')), 5000);\nawait driver.executeScript(\"arguments[0].click();\", submitBtn);\n// The transaction should appear in the table below\nconst table = await driver.wait(until.elementLocated(By.className('transactions-table')), 5000);\nconst firstRow = await table.findElement(By.css('tbody tr td'));\nconst rowText = await firstRow.getText();\n// AI parses \"concert tickets\" into a title. Let's just assert it appears.\nexpect(rowText).to.include('Concert');",
+              "err": {},
+              "uuid": "a334fa7e-4b06-440c-89d8-f6eed5afebf6",
+              "parentUUID": "77e71509-96e5-41f3-abc7-d94d009697a7",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "dcba091f-da9b-49f6-abf7-d122d34cf92d",
+            "fd787558-5488-4152-9184-0826be2e2533",
+            "a334fa7e-4b06-440c-89d8-f6eed5afebf6"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 25208,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 30000
+        },
+        {
+          "uuid": "31351312-5b06-47c3-85c3-023025d8e87b",
+          "title": "Vulnerability and Security E2E Tests",
+          "fullFile": "C:\\Users\\lokes\\Downloads\\smart-budget-v3\\e2e\\test\\vulnerability.test.js",
+          "file": "\\test\\vulnerability.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Vulnerability and Security E2E Tests\"",
+              "fullTitle": "Vulnerability and Security E2E Tests \"before all\" hook in \"Vulnerability and Security E2E Tests\"",
+              "timedOut": false,
+              "duration": 1015,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments('--headless=new'); // Enable headless mode\noptions.addArguments('--window-size=1280,800');\noptions.addArguments('--no-sandbox');\noptions.addArguments('--disable-dev-shm-usage');\n\ndriver = await new Builder()\n  .forBrowser('chrome')\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "7d43949a-418e-4a17-bdfe-55594b6f02cf",
+              "parentUUID": "31351312-5b06-47c3-85c3-023025d8e87b",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Vulnerability and Security E2E Tests\"",
+              "fullTitle": "Vulnerability and Security E2E Tests \"after all\" hook in \"Vulnerability and Security E2E Tests\"",
+              "timedOut": false,
+              "duration": 140,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "d52b1ee7-94f9-4b54-b201-2f8d87e77024",
+              "parentUUID": "31351312-5b06-47c3-85c3-023025d8e87b",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "TC_SEC_001 - Should enforce password masking on the login input",
+              "fullTitle": "Vulnerability and Security E2E Tests TC_SEC_001 - Should enforce password masking on the login input",
+              "timedOut": false,
+              "duration": 21297,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(URL);\nconst loginBtn = await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), \"Login\")]')), 5000);\nawait driver.wait(until.elementIsVisible(loginBtn), 5000);\nawait loginBtn.click();\nconst pwInput = await driver.wait(until.elementLocated(By.css('input[type=\"password\"]')), 5000);\nexpect(pwInput).to.not.be.null;\n\n// Double check the input type attribute is \"password\" for masking\nconst typeAttr = await pwInput.getAttribute('type');\nexpect(typeAttr).to.equal('password');",
+              "err": {},
+              "uuid": "b6842e5a-f0d5-47ff-aaf3-04f2198a8723",
+              "parentUUID": "31351312-5b06-47c3-85c3-023025d8e87b",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "TC_SEC_002 - Should safely handle SQL injection payloads in authentication fields",
+              "fullTitle": "Vulnerability and Security E2E Tests TC_SEC_002 - Should safely handle SQL injection payloads in authentication fields",
+              "timedOut": false,
+              "duration": 1948,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const emailInput = await driver.wait(until.elementLocated(By.css('input[type=\"email\"]')), 5000);\nawait emailInput.clear();\nawait emailInput.sendKeys(\"admin'OR'1'='1@gmail.com\");\nconst pwInput = await driver.wait(until.elementLocated(By.css('input[type=\"password\"]')), 5000);\nawait pwInput.clear();\nawait pwInput.sendKeys(\"admin\");\nconst submitBtn = await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), \"Sign In\")]')), 5000);\nawait submitBtn.click();\n// Verify it doesn't crash the server and returns \"User not found\" or validation error\nconst isErrorBanner = await driver.wait(\n  async () => {\n    const pageText = await driver.findElement(By.tagName('body')).getText();\n    return pageText.includes('User not found') || pageText.includes('valid email') || pageText.includes('Unauthorized') || pageText.includes('Invalid');\n  },\n  5000\n);\nexpect(isErrorBanner).to.be.true;",
+              "err": {},
+              "uuid": "3009f1b1-cc67-4754-b85c-564a8b564b26",
+              "parentUUID": "31351312-5b06-47c3-85c3-023025d8e87b",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "TC_SEC_003 - Should sanitize and prevent XSS injection in transaction entries",
+              "fullTitle": "Vulnerability and Security E2E Tests TC_SEC_003 - Should sanitize and prevent XSS injection in transaction entries",
+              "timedOut": false,
+              "duration": 26500,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Correct login first to get to Dashboard\nawait driver.get(URL);\nconst loginBtn = await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), \"Login\")]')), 5000);\nawait driver.wait(until.elementIsVisible(loginBtn), 5000);\nawait loginBtn.click();\nconst emailInput = await driver.wait(until.elementLocated(By.css('input[type=\"email\"]')), 5000);\nawait emailInput.clear();\nawait emailInput.sendKeys('lokeshmk436@gmail.com');\nconst pwInput = await driver.wait(until.elementLocated(By.css('input[type=\"password\"]')), 5000);\nawait pwInput.clear();\nawait pwInput.sendKeys('password123');\nconst submitBtn = await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), \"Sign In\")]')), 5000);\nawait submitBtn.click();\n// Go to entries page\nconst entriesCard = await driver.wait(until.elementLocated(By.xpath('//h4[text()=\"Smart Entries\"]/..')), 5000);\nawait driver.wait(until.elementIsVisible(entriesCard), 5000);\nawait entriesCard.click();\n// Input transaction with XSS payload\nconst inputField = await driver.wait(until.elementLocated(By.className('entry-input')), 5000);\nawait inputField.sendKeys(\"Spent ₹350 on <script id='xss-test'>alert('xss')</script>burger\");\nconst entrySubmit = await driver.wait(until.elementLocated(By.className('entry-submit-btn')), 5000);\nawait driver.executeScript(\"arguments[0].click();\", entrySubmit);\n// Wait for transactions table\nconst table = await driver.wait(until.elementLocated(By.className('transactions-table')), 5000);\n\n// Check if script tag was injected as DOM node (should NOT exist in DOM)\nconst scripts = await driver.findElements(By.css('#xss-test'));\nexpect(scripts.length).to.equal(0);",
+              "err": {},
+              "uuid": "0a51ea64-74fd-47e1-91e1-3053c32a5d34",
+              "parentUUID": "31351312-5b06-47c3-85c3-023025d8e87b",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "TC_SEC_004 - Should verify Content Security Policy / Clickjacking protection meta",
+              "fullTitle": "Vulnerability and Security E2E Tests TC_SEC_004 - Should verify Content Security Policy / Clickjacking protection meta",
+              "timedOut": false,
+              "duration": 13731,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(URL);\n// Find viewport meta or check frame-ancestors / headers via script\nconst cspMeta = await driver.findElements(By.css('meta[http-equiv=\"Content-Security-Policy\"]'));\n// React applications often run with frame busters or headers. Let's verify page does not load in iframe if constrained\nconst isFramed = await driver.executeScript(\"return window.self !== window.top;\");\nexpect(isFramed).to.be.false;",
+              "err": {},
+              "uuid": "2a64dea2-22c9-45d2-804c-f26af5a0011d",
+              "parentUUID": "31351312-5b06-47c3-85c3-023025d8e87b",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "b6842e5a-f0d5-47ff-aaf3-04f2198a8723",
+            "3009f1b1-cc67-4754-b85c-564a8b564b26",
+            "0a51ea64-74fd-47e1-91e1-3053c32a5d34",
+            "2a64dea2-22c9-45d2-804c-f26af5a0011d"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 63476,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "10.8.2"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "js-web-e2e",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "reports",
+        "reportFilename": "js-web-e2e",
+        "html": "true",
+        "json": "true"
+      },
+      "version": "6.3.2"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{"level":"info","message":"Running Excel Report Generator directly with mock/last results...","timestamp":"2026-06-15 13:34:45"}
+{"level":"info","message":"No raw results found, writing template Mobile_E2E_Report.xlsx","timestamp":"2026-06-15 13:34:45"}
+{"level":"info","message":"Generating Excel E2E Report at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-15 13:34:45"}
+{"level":"info","message":"Excel Report generated successfully at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-15 13:34:45"}
+{"level":"info","message":"Compiling consolidated Web & Security E2E Excel Report...","timestamp":"2026-06-15 14:10:07"}
+{"level":"info","message":"Generating Excel E2E Report at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-15 14:10:07"}
+{"level":"info","message":"Excel Report generated successfully at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-15 14:10:07"}
+{"level":"info","message":"Web & Security Excel Report saved to: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Web_E2E_Report.xlsx","timestamp":"2026-06-15 14:10:07"}
+{"level":"info","message":"Running Excel Report Generator directly with mock/last results...","timestamp":"2026-06-15 14:13:43"}
+{"level":"info","message":"No raw results found, writing template Mobile_E2E_Report.xlsx","timestamp":"2026-06-15 14:13:43"}
+{"level":"info","message":"Generating Excel E2E Report at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-15 14:13:43"}
+{"level":"info","message":"Excel Report generated successfully at: C:\\Users\\lokes\\Downloads\\smart-budget-v3\\excel\\Mobile_E2E_Report.xlsx","timestamp":"2026-06-15 14:13:44"}

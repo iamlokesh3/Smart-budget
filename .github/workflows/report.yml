@@ -1,0 +1,39 @@
+name: Compile Automated Testing Excel Reports
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  compile-reports:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Root Dependencies
+        run: npm install
+
+      - name: Generate Excel Workbooks
+        run: node utils/excelReportGenerator.js
+
+      - name: Upload Excel Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: Excel-Automation-Reports
+          path: |
+            reports/Selenium_Report.xlsx
+            reports/Security_Report.xlsx
+            reports/Appium_Report.xlsx
+            reports/Master_Report.xlsx
+          retention-days: 14
