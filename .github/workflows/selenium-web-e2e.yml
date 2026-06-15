@@ -23,7 +23,7 @@ jobs:
         run: |
           cd backend
           npm install
-          npm start &
+          npm start > ../backend.log 2>&1 &
         env:
           PORT: 5000
 
@@ -31,11 +31,19 @@ jobs:
         run: |
           cd frontend
           npm install
-          npm run dev -- --host &
+          npm run dev -- --host > ../frontend.log 2>&1 &
 
       - name: Wait for Servers to be Active
         run: |
           npx wait-on -t 60000 http://127.0.0.1:5000 http://127.0.0.1:5173
+
+      - name: Print Server Logs on Failure
+        if: failure()
+        run: |
+          echo "=== Backend Logs ==="
+          cat backend.log || true
+          echo "=== Frontend Logs ==="
+          cat frontend.log || true
 
       - name: Setup JavaScript Web E2E (Mocha & Selenium)
         run: |
@@ -68,7 +76,5 @@ jobs:
         if: always()
         with:
           name: Selenium-Web-E2E-Reports
-          path: |
-            e2e/reports/
-            e2e/mochawesome-report/
+          path: e2e/reports/
           retention-days: 14
