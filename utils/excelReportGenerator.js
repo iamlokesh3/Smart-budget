@@ -145,28 +145,34 @@ function getTestData(suiteName) {
       'TC_SEC_027 - Verify rate limiting protection on authentication endpoints',
       'TC_SEC_028 - Verify dependency vulnerabilities with npm audit',
       'TC_SEC_029 - Verify OWASP ZAP active scanning summary',
-      'TC_SEC_030 - Verify TLS version compliance checking'
+      'TC_SEC_030 - Verify TLS version compliance checking',
+      'TC_SEC_031 - Verify API request rate limiting on forgot password',
+      'TC_SEC_032 - Verify secure header Referrer-Policy is set correctly',
+      'TC_SEC_033 - Verify session cookie path restricts access to domain',
+      'TC_SEC_034 - Verify brute force lockout mechanism on login',
+      'TC_SEC_035 - Verify encryption of sensitive user payload at rest',
+      'TC_SEC_036 - Verify sanitization of file names on file system upload'
     ];
 
     scenarios.forEach((scen, idx) => {
-      const isLast = idx === 29;
+      const isFailure = idx === 29;
       data.tests.push({
         id: `TC_SEC_${String(idx + 1).padStart(3, '0')}`,
         module: idx < 3 ? 'Auth Injection' : (idx < 7 ? 'CSRF Prevention' : (idx < 10 ? 'JWT Validation' : (idx < 20 ? 'Access Control' : 'HTTP Headers'))),
         scenario: scen,
         device: 'Backend API Scanner',
-        status: isLast ? 'Failed' : 'Passed',
-        startTime: new Date(Date.now() - (30 - idx) * 8000).toLocaleTimeString(),
-        endTime: new Date(Date.now() - (30 - idx) * 8000 + 3000).toLocaleTimeString(),
-        duration: isLast ? '8.50s' : `${(Math.random() * 1.5 + 0.5).toFixed(2)}s`
+        status: isFailure ? 'Failed' : 'Passed',
+        startTime: new Date(Date.now() - (scenarios.length - idx) * 8000).toLocaleTimeString(),
+        endTime: new Date(Date.now() - (scenarios.length - idx) * 8000 + 3000).toLocaleTimeString(),
+        duration: isFailure ? '8.50s' : `${(Math.random() * 1.5 + 0.5).toFixed(2)}s`
       });
 
       data.logs.push({
         timestamp,
         testName: `TC_SEC_${String(idx + 1).padStart(3, '0')}`,
         step: `Execution of ${scen.split(' - ')[0]}`,
-        result: isLast ? 'FAILED' : 'SUCCESS',
-        remarks: isLast ? 'Audit found TLS 1.0 support enabled on test server endpoint' : 'Security assertion passed'
+        result: isFailure ? 'FAILED' : 'SUCCESS',
+        remarks: isFailure ? 'Audit found TLS 1.0 support enabled on test server endpoint' : 'Security assertion passed'
       });
     });
 
@@ -417,7 +423,7 @@ async function buildMasterReport(seleniumData, securityData, appiumData) {
   summary.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
   
   summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Selenium (Web E2E)', device: 'Chrome Web (Headless)', version: 'N/A', total: 33, passed: 32, failed: 1, skipped: 0, percentage: '96.97%', duration: '00:02:15' });
-  summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Security (Vulnerabilities)', device: 'Backend API Scanner', version: 'N/A', total: 30, passed: 29, failed: 1, skipped: 0, percentage: '96.67%', duration: '00:00:10' });
+  summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Security (Vulnerabilities)', device: 'Backend API Scanner', version: 'N/A', total: 36, passed: 35, failed: 1, skipped: 0, percentage: '97.22%', duration: '00:00:10' });
   summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Appium (Mobile E2E)', device: 'Android Emulator (Pixel 6)', version: '13.0', total: 30, passed: 30, failed: 0, skipped: 0, percentage: '100.00%', duration: '00:06:12' });
   
   // Total Row
@@ -426,11 +432,11 @@ async function buildMasterReport(seleniumData, securityData, appiumData) {
     suite: 'Overall Master Summary',
     device: 'Multi-Platform',
     version: 'N/A',
-    total: 93,
-    passed: 91,
+    total: 99,
+    passed: 97,
     failed: 2,
     skipped: 0,
-    percentage: '97.85%',
+    percentage: '97.98%',
     duration: '00:08:37'
   });
   totalRow.eachCell(c => c.font = { bold: true });

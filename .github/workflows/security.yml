@@ -42,6 +42,9 @@ jobs:
       - name: Run Security Tests
         run: npm run test:security || true
 
+      - name: Generate Excel Report
+        run: node utils/excelReportGenerator.js
+
       - name: Upload Security Artifacts
         uses: actions/upload-artifact@v4
         if: always()
@@ -50,5 +53,7 @@ jobs:
           path: |
             reports/security-report.html
             reports/security-report.json
+            reports/Security_Report.xlsx
+            reports/Master_Report.xlsx
             screenshots/tls_compliance_failure.png
           retention-days: 7
