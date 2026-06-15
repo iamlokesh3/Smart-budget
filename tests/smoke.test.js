@@ -25,7 +25,7 @@ describe('Smoke Tests - Critical Path Verification', () => {
     
     try {
       driver = driverFactory.getDriver();
-      loginPage = new LoginPage(driver);
+      loginPage = LoginPage;
       logger.info('Driver initialized successfully for smoke tests');
     } catch (error) {
       logger.error(`Failed to initialize driver for smoke tests: ${error.message}`);
