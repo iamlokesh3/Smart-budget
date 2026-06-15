@@ -3,16 +3,13 @@ import chrome from 'selenium-webdriver/chrome.js';
 import { expect } from 'chai';
 
 describe('Transactions E2E Tests', function () {
-  this.timeout(60000);
+  this.timeout(30000);
   let driver;
   const URL = 'http://localhost:5173';
 
   before(async function () {
     const options = new chrome.Options();
-    options.addArguments('--headless=new'); // Enable headless mode
     options.addArguments('--window-size=1280,800');
-    options.addArguments('--no-sandbox');
-    options.addArguments('--disable-dev-shm-usage');
     
     driver = await new Builder()
       .forBrowser('chrome')
@@ -61,7 +58,7 @@ describe('Transactions E2E Tests', function () {
     await inputField.sendKeys('Spent ₹450 on concert tickets');
 
     const submitBtn = await driver.findElement(By.className('entry-submit-btn'));
-    await submitBtn.click();
+    await driver.executeScript("arguments[0].click();", submitBtn);
 
     // The transaction should appear in the table below
     const table = await driver.wait(until.elementLocated(By.className('transactions-table')), 5000);

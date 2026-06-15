@@ -102,14 +102,16 @@ export function generateNotifications(transactions, budgets, goals) {
 
   // Budget alerts
   budgets.forEach(b => {
+    if (!b || !b.amount) return;
     const ratio = monthTotal / b.amount;
+    const budgetType = b.type?.toLowerCase() || 'budget';
     if (ratio > 1) {
       notifications.push({
         id: `budget-exceeded-${b.id}`,
         type: 'danger',
         icon: '⚠️',
         title: `Budget Exceeded`,
-        message: `You've exceeded your ${b.type.toLowerCase()} budget of ₹${b.amount.toLocaleString()}.`,
+        message: `You've exceeded your ${budgetType} budget of ₹${b.amount.toLocaleString()}.`,
         time: now.toISOString(),
       });
     } else if (ratio > 0.8) {
@@ -118,7 +120,7 @@ export function generateNotifications(transactions, budgets, goals) {
         type: 'warning',
         icon: '🔔',
         title: `Budget Alert`,
-        message: `You've used ${(ratio * 100).toFixed(0)}% of your ${b.type.toLowerCase()} budget.`,
+        message: `You've used ${(ratio * 100).toFixed(0)}% of your ${budgetType} budget.`,
         time: now.toISOString(),
       });
     }
@@ -126,13 +128,14 @@ export function generateNotifications(transactions, budgets, goals) {
 
   // Goal completions
   goals.forEach(g => {
+    if (!g || g.target == null || g.current == null) return;
     if (g.current >= g.target) {
       notifications.push({
         id: `goal-complete-${g.id}`,
         type: 'success',
         icon: '🎉',
         title: `Goal Achieved!`,
-        message: `Congratulations! You've reached your "${g.name}" goal of ₹${g.target.toLocaleString()}.`,
+        message: `Congratulations! You've reached your "${g.name || 'Savings'}" goal of ₹${g.target.toLocaleString()}.`,
         time: now.toISOString(),
       });
     }

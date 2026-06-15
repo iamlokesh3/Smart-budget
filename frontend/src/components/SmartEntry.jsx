@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Send, Sparkles, Trash2, Edit2, Check, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Send, Sparkles, Trash2, Edit2, Check, X, Edit3 } from 'lucide-react';
 import { parseEntry, getCategoryMeta } from '../utils/aiParser';
 import { useApp } from '../context/AppContext';
 
@@ -15,6 +15,9 @@ export default function SmartEntry() {
 
   const cur = currency || '₹';
 
+  useEffect(() => {
+    setRenameInput(filter !== 'all' ? filter : '');
+  }, [filter]);
 
   function handleInput(e) {
     const val = e.target.value;
@@ -142,14 +145,14 @@ export default function SmartEntry() {
               </div>
               <div style={{display:'flex', gap:'.5rem', flexWrap:'wrap'}}>
                 <button
-                  onClick={() => { setFilter('all'); setRenameInput(''); }}
+                  onClick={() => setFilter('all')}
                   className={`badge ${filter==='all'?'badge-blue':'badge-muted'}`}
                   style={{cursor:'pointer', border:'none', fontFamily:'var(--font)', padding:'.35rem .875rem'}}
                 >All</button>
                 {categories.map(cat => (
                   <button
                     key={cat}
-                    onClick={() => { setFilter(cat); setRenameInput(cat); }}
+                    onClick={() => setFilter(cat)}
                     className={`badge ${filter===cat?'badge-blue':'badge-muted'}`}
                     style={{cursor:'pointer', border:'none', fontFamily:'var(--font)', padding:'.35rem .875rem', textTransform:'capitalize'}}
                   >{cat}</button>
@@ -239,7 +242,7 @@ export default function SmartEntry() {
                       </td>
                       <td style={{color:'var(--text-muted)', fontSize:'.875rem', whiteSpace:'nowrap'}}>{tx.dateLabel}</td>
                       <td style={{textAlign:'right', fontWeight:700, color:'var(--danger)', whiteSpace:'nowrap'}}>
-                        -{cur}{tx.amount.toLocaleString('en-IN')}
+                        -{cur}{(tx.amount || 0).toLocaleString('en-IN')}
                       </td>
                       <td style={{textAlign:'center'}}>
                         <div style={{display:'flex', gap:'.25rem', justifyContent:'center'}}>

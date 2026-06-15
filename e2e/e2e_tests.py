@@ -2,16 +2,18 @@ import time
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 class SmartBudgetE2ETests(unittest.TestCase):
     def setUp(self):
         options = webdriver.ChromeOptions()
+        options.add_argument('--headless=new') # Enable headless mode
         options.add_argument('--window-size=1280,800')
-        # options.add_argument('--headless') # Uncomment to run invisibly
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
         
-        # In newer Selenium versions, ChromeDriverManager is built-in
         self.driver = webdriver.Chrome(options=options)
         self.driver.implicitly_wait(10)
         self.wait = WebDriverWait(self.driver, 10)
@@ -25,7 +27,10 @@ class SmartBudgetE2ETests(unittest.TestCase):
         driver.get(self.url)
         
         # Verify landing page
-        self.assertIn("SmartBudget", driver.title)
+        self.assertIn("Smart Budget", driver.title)
+        
+        # Wait for the heading text to appear (to handle rendering/animation latency)
+        self.wait.until(EC.text_to_be_present_in_element((By.TAG_NAME, "h1"), "Your Personal AI"))
         heading = driver.find_element(By.TAG_NAME, "h1").text
         self.assertIn("Your Personal AI", heading)
         
@@ -63,7 +68,7 @@ class SmartBudgetE2ETests(unittest.TestCase):
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'action-grid')))
         
         # Navigate to Smart Entries
-        entries_card = driver.find_element(By.XPATH, '//h4[text()="Smart Entries"]/..')
+        entries_card = driver.find_element(By.XPATH, '//h4[text()="Add Entry"]/..')
         entries_card.click()
         
         # Wait for Smart Entries page
@@ -71,10 +76,7 @@ class SmartBudgetE2ETests(unittest.TestCase):
         
         # Add a new transaction
         input_field = driver.find_element(By.CLASS_NAME, 'entry-input')
-        input_field.send_keys('Spent Rs 800 on groceries')
-        
-        submit_btn = driver.find_element(By.CLASS_NAME, 'entry-submit-btn')
-        submit_btn.click()
+        input_field.send_keys('Spent Rs 800 on groceries', Keys.ENTER)
         
         # Wait for transaction to appear
         table = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'transactions-table')))

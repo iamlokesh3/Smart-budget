@@ -39,6 +39,7 @@ export default function Reports() {
     );
   }
 
+  const catBreakdown = groupByCategory(transactions);
   const monthlyBudget = budgets.find(b => b.type === 'Monthly');
 
   return (
@@ -124,7 +125,7 @@ export default function Reports() {
                 <tr key={tx.id}>
                   <td style={{fontWeight:500}}>{tx.categoryIcon} {tx.title}</td>
                   <td><span className="badge badge-blue" style={{textTransform:'capitalize'}}>{tx.category}</span></td>
-                  <td style={{textAlign:'right', fontWeight:700, color:'var(--danger)'}}>{cur}{tx.amount.toLocaleString('en-IN')}</td>
+                  <td style={{textAlign:'right', fontWeight:700, color:'var(--danger)'}}>{cur}{(tx.amount || 0).toLocaleString('en-IN')}</td>
                 </tr>
               ))}
             </tbody>
