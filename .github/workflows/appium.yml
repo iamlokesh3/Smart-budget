@@ -27,6 +27,9 @@ jobs:
       - name: Run Appium Tests
         run: npm run test:appium || true
 
+      - name: Generate Excel Report
+        run: node utils/excelReportGenerator.js
+
       - name: Upload Appium Artifacts
         uses: actions/upload-artifact@v4
         if: always()
@@ -35,5 +38,7 @@ jobs:
           path: |
             reports/appium-report.html
             reports/appium-report.json
+            reports/Appium_Report.xlsx
+            reports/Master_Report.xlsx
             screenshots/appium_logout_cache_failure.png
           retention-days: 7
