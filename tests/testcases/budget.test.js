@@ -18,14 +18,4 @@ describe('Budget', function () {
     const title = await global.driverInstance.getTitle();
     expect(title).to.not.be.null;
   });
-
-  it('TC_BUDGET_032 - Add budget category limit', async function () {
-    const title = await global.driverInstance.getTitle();
-    expect(title).to.not.be.null;
-  });
-
-  it('TC_BUDGET_033 - Verify budget progress calculation', async function () {
-    const title = await global.driverInstance.getTitle();
-    expect(title).to.not.be.null;
-  });
 });

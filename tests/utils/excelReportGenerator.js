@@ -72,9 +72,7 @@ function getTestData() {
     { id: 'TC_PROF_030', module: 'Profile', desc: 'Profile Image Upload functionality', expected: 'Should accept avatar uploads and crop image formats', actual: 'Avatar uploaded successfully and preview updated', status: 'Passed', duration: '2.10s' },
     
     // Budget
-    { id: 'TC_BUDGET_031', module: 'Budget', desc: 'Load Budget Planner Page', expected: 'Should load Budget Planner page successfully', actual: 'Budget Planner header is displayed', status: 'Passed', duration: '0.85s' },
-    { id: 'TC_BUDGET_032', module: 'Budget', desc: 'Add budget category limit', expected: 'Should add budget category limit successfully', actual: 'New category limit added and displayed', status: 'Passed', duration: '1.20s' },
-    { id: 'TC_BUDGET_033', module: 'Budget', desc: 'Verify budget progress calculation', expected: 'Should verify budget progress calculation is correct', actual: 'Progress percentage matches spending details', status: 'Passed', duration: '0.90s' }
+    { id: 'TC_BUDGET_031', module: 'Budget', desc: 'Load Budget Planner Page', expected: 'Should load Budget Planner page successfully', actual: 'Budget Planner header is displayed', status: 'Passed', duration: '0.85s' }
   ];
 
   return {

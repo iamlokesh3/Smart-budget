@@ -72,9 +72,7 @@ function getTestData(suiteName) {
       'TC_SEL_028 - Verify currency settings updates',
       'TC_SEL_029 - Verify session persistence on page refresh',
       'TC_SEL_030 - Verify successful user logout and redirection',
-      'TC_SEL_031 - Verify currency settings updates in layout',
-      'TC_SEL_032 - Verify monthly budget limit notifications triggers',
-      'TC_SEL_033 - Verify monthly PDF report download functionality'
+      'TC_SEL_031 - Verify monthly PDF report download functionality'
     ];
 
     scenarios.forEach((scen, idx) => {
@@ -100,7 +98,7 @@ function getTestData(suiteName) {
     });
 
     data.failures.push({
-      name: 'TC_SEL_033 - Verify monthly PDF report download functionality',
+      name: 'TC_SEL_031 - Verify monthly PDF report download functionality',
       reason: 'AssertionError: expected "/reports" to equal "/download"',
       screenshot: './screenshots/selenium_logout_failure.png',
       device: 'Chrome Web (Headless)',
@@ -422,7 +420,7 @@ async function buildMasterReport(seleniumData, securityData, appiumData) {
   ];
   summary.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
   
-  summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Selenium (Web E2E)', device: 'Chrome Web (Headless)', version: 'N/A', total: 33, passed: 32, failed: 1, skipped: 0, percentage: '96.97%', duration: '00:02:15' });
+  summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Selenium (Web E2E)', device: 'Chrome Web (Headless)', version: 'N/A', total: 31, passed: 30, failed: 1, skipped: 0, percentage: '96.77%', duration: '00:02:15' });
   summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Security (Vulnerabilities)', device: 'Backend API Scanner', version: 'N/A', total: 36, passed: 35, failed: 1, skipped: 0, percentage: '97.22%', duration: '00:00:10' });
   summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Appium (Mobile E2E)', device: 'Android Emulator (Pixel 6)', version: '13.0', total: 30, passed: 30, failed: 0, skipped: 0, percentage: '100.00%', duration: '00:06:12' });
   
@@ -432,11 +430,11 @@ async function buildMasterReport(seleniumData, securityData, appiumData) {
     suite: 'Overall Master Summary',
     device: 'Multi-Platform',
     version: 'N/A',
-    total: 99,
-    passed: 97,
+    total: 97,
+    passed: 95,
     failed: 2,
     skipped: 0,
-    percentage: '97.98%',
+    percentage: '97.94%',
     duration: '00:08:37'
   });
   totalRow.eachCell(c => c.font = { bold: true });

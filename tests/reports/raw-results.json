@@ -1,13 +1,13 @@
 {
   "summary": {
-    "executionDate": "6/15/2026, 5:25:28 PM",
+    "executionDate": "6/15/2026, 6:06:32 PM",
     "deviceName": "Chrome Web (Headless)",
     "androidVersion": "N/A",
-    "totalTests": 33,
-    "passed": 32,
+    "totalTests": 31,
+    "passed": 30,
     "failed": 1,
     "skipped": 0,
-    "passPercentage": "96.97%",
+    "passPercentage": "96.77%",
     "executionDuration": "00:00:00"
   },
   "tests": [
@@ -15,24 +15,6 @@
       "id": "TC_BUDGET_031",
       "module": "Budget",
       "desc": "Load Budget Planner Page",
-      "expected": "Verification passed successfully",
-      "actual": "Assertion matched expected UI state",
-      "status": "Passed",
-      "duration": "0.00s"
-    },
-    {
-      "id": "TC_BUDGET_032",
-      "module": "Budget",
-      "desc": "Add budget category limit",
-      "expected": "Verification passed successfully",
-      "actual": "Assertion matched expected UI state",
-      "status": "Passed",
-      "duration": "0.00s"
-    },
-    {
-      "id": "TC_BUDGET_033",
-      "module": "Budget",
-      "desc": "Verify budget progress calculation",
       "expected": "Verification passed successfully",
       "actual": "Assertion matched expected UI state",
       "status": "Passed",
@@ -319,462 +301,434 @@
   ],
   "logs": [
     {
-      "timestamp": "2026-06-15T11:55:28.808Z",
+      "timestamp": "2026-06-15T12:36:32.987Z",
       "testName": "TC_BUDGET_031",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_BUDGET_031 - Load Budget Planner Page"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.811Z",
+      "timestamp": "2026-06-15T12:36:32.990Z",
       "testName": "TC_BUDGET_031",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.811Z",
-      "testName": "TC_BUDGET_032",
-      "step": "Test Initialized",
-      "result": "SUCCESS",
-      "remarks": "Ready to run: TC_BUDGET_032 - Add budget category limit"
-    },
-    {
-      "timestamp": "2026-06-15T11:55:28.812Z",
-      "testName": "TC_BUDGET_032",
-      "step": "Test finished",
-      "result": "SUCCESS",
-      "remarks": "All assertions verified"
-    },
-    {
-      "timestamp": "2026-06-15T11:55:28.812Z",
-      "testName": "TC_BUDGET_033",
-      "step": "Test Initialized",
-      "result": "SUCCESS",
-      "remarks": "Ready to run: TC_BUDGET_033 - Verify budget progress calculation"
-    },
-    {
-      "timestamp": "2026-06-15T11:55:28.812Z",
-      "testName": "TC_BUDGET_033",
-      "step": "Test finished",
-      "result": "SUCCESS",
-      "remarks": "All assertions verified"
-    },
-    {
-      "timestamp": "2026-06-15T11:55:28.814Z",
+      "timestamp": "2026-06-15T12:36:32.991Z",
       "testName": "TC_DASH_016",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_DASH_016 - Dashboard Loading"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.814Z",
+      "timestamp": "2026-06-15T12:36:32.992Z",
       "testName": "TC_DASH_016",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.814Z",
+      "timestamp": "2026-06-15T12:36:32.992Z",
       "testName": "TC_DASH_017",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_DASH_017 - Balance Summary Display"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.815Z",
+      "timestamp": "2026-06-15T12:36:32.993Z",
       "testName": "TC_DASH_017",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.815Z",
+      "timestamp": "2026-06-15T12:36:32.993Z",
       "testName": "TC_DASH_018",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_DASH_018 - Recent Transactions Display"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.816Z",
+      "timestamp": "2026-06-15T12:36:32.994Z",
       "testName": "TC_DASH_018",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.816Z",
+      "timestamp": "2026-06-15T12:36:32.994Z",
       "testName": "TC_DASH_019",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_DASH_019 - Chart Visualization"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.816Z",
+      "timestamp": "2026-06-15T12:36:32.995Z",
       "testName": "TC_DASH_019",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.816Z",
+      "timestamp": "2026-06-15T12:36:32.995Z",
       "testName": "TC_DASH_020",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_DASH_020 - Export Report functionality"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.819Z",
+      "timestamp": "2026-06-15T12:36:32.998Z",
       "testName": "TC_DASH_020",
       "step": "Assertion failure handled",
       "result": "FAILED",
       "remarks": "AssertionError: expected export response status to equal 200 (received 500 Server Error)"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.820Z",
+      "timestamp": "2026-06-15T12:36:32.999Z",
       "testName": "TC_AUTH_001",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_AUTH_001 - Valid Login"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.821Z",
+      "timestamp": "2026-06-15T12:36:32.999Z",
       "testName": "TC_AUTH_001",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.821Z",
+      "timestamp": "2026-06-15T12:36:33.000Z",
       "testName": "TC_AUTH_002",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_AUTH_002 - Invalid Login"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.821Z",
+      "timestamp": "2026-06-15T12:36:33.000Z",
       "testName": "TC_AUTH_002",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.821Z",
+      "timestamp": "2026-06-15T12:36:33.000Z",
       "testName": "TC_AUTH_003",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_AUTH_003 - Empty Email"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.822Z",
+      "timestamp": "2026-06-15T12:36:33.001Z",
       "testName": "TC_AUTH_003",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.822Z",
+      "timestamp": "2026-06-15T12:36:33.001Z",
       "testName": "TC_AUTH_004",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_AUTH_004 - Empty Password"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.822Z",
+      "timestamp": "2026-06-15T12:36:33.001Z",
       "testName": "TC_AUTH_004",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.823Z",
+      "timestamp": "2026-06-15T12:36:33.001Z",
       "testName": "TC_AUTH_005",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_AUTH_005 - Invalid Email Format"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.823Z",
+      "timestamp": "2026-06-15T12:36:33.002Z",
       "testName": "TC_AUTH_005",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.823Z",
+      "timestamp": "2026-06-15T12:36:33.002Z",
       "testName": "TC_AUTH_006",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_AUTH_006 - Forgot Password"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.824Z",
+      "timestamp": "2026-06-15T12:36:33.002Z",
       "testName": "TC_AUTH_006",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.824Z",
+      "timestamp": "2026-06-15T12:36:33.002Z",
       "testName": "TC_AUTH_007",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_AUTH_007 - Reset Password"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.824Z",
+      "timestamp": "2026-06-15T12:36:33.003Z",
       "testName": "TC_AUTH_007",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.824Z",
+      "timestamp": "2026-06-15T12:36:33.003Z",
       "testName": "TC_AUTH_008",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_AUTH_008 - Session Timeout"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.824Z",
+      "timestamp": "2026-06-15T12:36:33.003Z",
       "testName": "TC_AUTH_008",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.824Z",
+      "timestamp": "2026-06-15T12:36:33.003Z",
       "testName": "TC_AUTH_009",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_AUTH_009 - Logout"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.825Z",
+      "timestamp": "2026-06-15T12:36:33.003Z",
       "testName": "TC_AUTH_009",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.825Z",
+      "timestamp": "2026-06-15T12:36:33.003Z",
       "testName": "TC_AUTH_010",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_AUTH_010 - Remember Me Functionality"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.826Z",
+      "timestamp": "2026-06-15T12:36:33.004Z",
       "testName": "TC_AUTH_010",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.826Z",
+      "timestamp": "2026-06-15T12:36:33.004Z",
       "testName": "TC_PROF_029",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_PROF_029 - Update Profile"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.827Z",
+      "timestamp": "2026-06-15T12:36:33.005Z",
       "testName": "TC_PROF_029",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.827Z",
+      "timestamp": "2026-06-15T12:36:33.005Z",
       "testName": "TC_PROF_030",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_PROF_030 - Profile Image Upload functionality"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.827Z",
+      "timestamp": "2026-06-15T12:36:33.006Z",
       "testName": "TC_PROF_030",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.828Z",
+      "timestamp": "2026-06-15T12:36:33.006Z",
       "testName": "TC_REG_011",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_REG_011 - Successful Registration"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.829Z",
+      "timestamp": "2026-06-15T12:36:33.007Z",
       "testName": "TC_REG_011",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.829Z",
+      "timestamp": "2026-06-15T12:36:33.007Z",
       "testName": "TC_REG_012",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_REG_012 - Duplicate Email Registration"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.829Z",
+      "timestamp": "2026-06-15T12:36:33.008Z",
       "testName": "TC_REG_012",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.829Z",
+      "timestamp": "2026-06-15T12:36:33.008Z",
       "testName": "TC_REG_013",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_REG_013 - Password Mismatch"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.830Z",
+      "timestamp": "2026-06-15T12:36:33.008Z",
       "testName": "TC_REG_013",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.830Z",
+      "timestamp": "2026-06-15T12:36:33.008Z",
       "testName": "TC_REG_014",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_REG_014 - Weak Password Validation"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.830Z",
+      "timestamp": "2026-06-15T12:36:33.008Z",
       "testName": "TC_REG_014",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.830Z",
+      "timestamp": "2026-06-15T12:36:33.008Z",
       "testName": "TC_REG_015",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_REG_015 - Required Field Validation"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.831Z",
+      "timestamp": "2026-06-15T12:36:33.009Z",
       "testName": "TC_REG_015",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.832Z",
+      "timestamp": "2026-06-15T12:36:33.010Z",
       "testName": "TC_TX_021",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_TX_021 - Add Income"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.832Z",
+      "timestamp": "2026-06-15T12:36:33.011Z",
       "testName": "TC_TX_021",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.832Z",
+      "timestamp": "2026-06-15T12:36:33.011Z",
       "testName": "TC_TX_022",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_TX_022 - Add Expense"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.833Z",
+      "timestamp": "2026-06-15T12:36:33.012Z",
       "testName": "TC_TX_022",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.833Z",
+      "timestamp": "2026-06-15T12:36:33.012Z",
       "testName": "TC_TX_023",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_TX_023 - Edit Transaction"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.833Z",
+      "timestamp": "2026-06-15T12:36:33.012Z",
       "testName": "TC_TX_023",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.833Z",
+      "timestamp": "2026-06-15T12:36:33.013Z",
       "testName": "TC_TX_024",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_TX_024 - Delete Transaction"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.834Z",
+      "timestamp": "2026-06-15T12:36:33.013Z",
       "testName": "TC_TX_024",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.834Z",
+      "timestamp": "2026-06-15T12:36:33.013Z",
       "testName": "TC_TX_025",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_TX_025 - Search Transaction"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.834Z",
+      "timestamp": "2026-06-15T12:36:33.014Z",
       "testName": "TC_TX_025",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.834Z",
+      "timestamp": "2026-06-15T12:36:33.014Z",
       "testName": "TC_TX_026",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_TX_026 - Filter Transaction"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.835Z",
+      "timestamp": "2026-06-15T12:36:33.014Z",
       "testName": "TC_TX_026",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.835Z",
+      "timestamp": "2026-06-15T12:36:33.014Z",
       "testName": "TC_TX_027",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_TX_027 - Sort Transaction"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.835Z",
+      "timestamp": "2026-06-15T12:36:33.015Z",
       "testName": "TC_TX_027",
       "step": "Test finished",
       "result": "SUCCESS",
       "remarks": "All assertions verified"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.835Z",
+      "timestamp": "2026-06-15T12:36:33.015Z",
       "testName": "TC_TX_028",
       "step": "Test Initialized",
       "result": "SUCCESS",
       "remarks": "Ready to run: TC_TX_028 - Transaction History Display"
     },
     {
-      "timestamp": "2026-06-15T11:55:28.836Z",
+      "timestamp": "2026-06-15T12:36:33.015Z",
       "testName": "TC_TX_028",
       "step": "Test finished",
       "result": "SUCCESS",
@@ -783,7 +737,7 @@
   ],
   "performance": [
     {
-      "timestamp": "2026-06-15T11:55:28.805Z",
+      "timestamp": "2026-06-15T12:36:32.984Z",
       "metricName": "Main Page Load Time",
       "targetComponent": "Landing Screen",
       "value": "380ms",
