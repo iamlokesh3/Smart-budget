@@ -48,15 +48,16 @@ describe('Auth Flow E2E Tests', function () {
 
   it('should simulate a login attempt', async function () {
     // Fill out the email input
-    const emailInput = await driver.findElement(By.css('input[type="email"]'));
+    const emailInput = await driver.wait(until.elementLocated(By.css('input[type="email"]')), 5000);
     await emailInput.sendKeys('lokeshmk436@gmail.com');
 
     // Fill out password
-    const pwInput = await driver.findElement(By.css('input[type="password"]'));
+    const pwInput = await driver.wait(until.elementLocated(By.css('input[type="password"]')), 5000);
     await pwInput.sendKeys('password123');
 
     // Submit
-    const submitBtn = await driver.findElement(By.xpath('//button[contains(text(), "Sign In")]'));
+    const submitBtn = await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), "Sign In")]')), 5000);
+    await driver.wait(until.elementIsVisible(submitBtn), 5000);
     await submitBtn.click();
 
     // Wait for dashboard to load (checking for welcome text or action grid)

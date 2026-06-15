@@ -32,13 +32,14 @@ describe('Transactions E2E Tests', function () {
 
     await driver.wait(until.elementLocated(By.className('auth-card')), 5000);
 
-    const emailInput = await driver.findElement(By.css('input[type="email"]'));
+    const emailInput = await driver.wait(until.elementLocated(By.css('input[type="email"]')), 5000);
     await emailInput.sendKeys('lokeshmk436@gmail.com');
 
-    const pwInput = await driver.findElement(By.css('input[type="password"]'));
+    const pwInput = await driver.wait(until.elementLocated(By.css('input[type="password"]')), 5000);
     await pwInput.sendKeys('password123');
 
-    const submitBtn = await driver.findElement(By.xpath('//button[contains(text(), "Sign In")]'));
+    const submitBtn = await driver.wait(until.elementLocated(By.xpath('//button[contains(text(), "Sign In")]')), 5000);
+    await driver.wait(until.elementIsVisible(submitBtn), 5000);
     await submitBtn.click();
 
     const dashboardGrid = await driver.wait(until.elementLocated(By.className('action-grid')), 5000);
@@ -47,7 +48,8 @@ describe('Transactions E2E Tests', function () {
 
   it('should navigate to Smart Entries page', async function () {
     // Click the Smart Entries card on the dashboard
-    const entriesCard = await driver.findElement(By.xpath('//h4[text()="Smart Entries"]/..'));
+    const entriesCard = await driver.wait(until.elementLocated(By.xpath('//h4[text()="Smart Entries"]/..')), 5000);
+    await driver.wait(until.elementIsVisible(entriesCard), 5000);
     await entriesCard.click();
 
     // Verify we are on the entries page
@@ -57,10 +59,11 @@ describe('Transactions E2E Tests', function () {
   });
 
   it('should add a new natural language transaction', async function () {
-    const inputField = await driver.findElement(By.className('entry-input'));
+    const inputField = await driver.wait(until.elementLocated(By.className('entry-input')), 5000);
+    await driver.wait(until.elementIsVisible(inputField), 5000);
     await inputField.sendKeys('Spent ₹450 on concert tickets');
 
-    const submitBtn = await driver.findElement(By.className('entry-submit-btn'));
+    const submitBtn = await driver.wait(until.elementLocated(By.className('entry-submit-btn')), 5000);
     await driver.executeScript("arguments[0].click();", submitBtn);
 
     // The transaction should appear in the table below

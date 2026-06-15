@@ -42,11 +42,11 @@ class SmartBudgetE2ETests(unittest.TestCase):
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'auth-card')))
         
         # Fill Login
-        driver.find_element(By.CSS_SELECTOR, 'input[type="email"]').send_keys('lokeshmk436@gmail.com')
-        driver.find_element(By.CSS_SELECTOR, 'input[type="password"]').send_keys('password123')
+        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input[type="email"]'))).send_keys('lokeshmk436@gmail.com')
+        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input[type="password"]'))).send_keys('password123')
         
         # Submit
-        submit = driver.find_element(By.XPATH, '//button[contains(text(), "Sign In")]')
+        submit = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Sign In")]')))
         submit.click()
         
         # Wait for dashboard
@@ -62,20 +62,22 @@ class SmartBudgetE2ETests(unittest.TestCase):
         login_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Login")]')))
         login_btn.click()
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'auth-card')))
-        driver.find_element(By.CSS_SELECTOR, 'input[type="email"]').send_keys('lokeshmk436@gmail.com')
-        driver.find_element(By.CSS_SELECTOR, 'input[type="password"]').send_keys('password123')
-        driver.find_element(By.XPATH, '//button[contains(text(), "Sign In")]').click()
+        
+        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input[type="email"]'))).send_keys('lokeshmk436@gmail.com')
+        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input[type="password"]'))).send_keys('password123')
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Sign In")]'))).click()
+        
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'action-grid')))
         
         # Navigate to Smart Entries
-        entries_card = driver.find_element(By.XPATH, '//h4[text()="Add Entry"]/..')
+        entries_card = self.wait.until(EC.element_to_be_clickable((By.XPATH, '//h4[text()="Add Entry"]/..')))
         entries_card.click()
         
         # Wait for Smart Entries page
         self.wait.until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, '.page-header h2'), 'Smart Entries'))
         
         # Add a new transaction
-        input_field = driver.find_element(By.CLASS_NAME, 'entry-input')
+        input_field = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'entry-input')))
         input_field.send_keys('Spent Rs 800 on groceries', Keys.ENTER)
         
         # Wait for transaction to appear
