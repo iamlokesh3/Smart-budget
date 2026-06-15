@@ -5,12 +5,12 @@ import { generateNotifications } from '../utils/analytics';
 const AppContext = createContext(null);
 
 // Dynamic API Endpoint setup
-// Android emulator uses 10.0.2.2 to loopback to host localhost
-const LOCAL_API_URL = Platform.OS === 'android' ? 'http://10.0.2.2:5000/api' : 'http://localhost:5000/api';
+// We use the host PC's Wi-Fi IP address so that physical mobile devices on the same Wi-Fi can connect to the local backend.
+const LOCAL_API_URL = 'http://10.155.108.229:5000/api';
 const REMOTE_API_URL = 'https://smart-budget-2-brfw.onrender.com/api';
 
-// Use Remote API if available, fallback to Local API
-const API_URL = REMOTE_API_URL;
+// Use Local API for local development and E2E testing
+const API_URL = LOCAL_API_URL;
 
 export function AppProvider({ children }) {
   const [user, setUser] = useState(null);

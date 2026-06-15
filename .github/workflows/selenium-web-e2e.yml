@@ -1,0 +1,74 @@
+name: Web Selenium E2E Automation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  web-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install Backend Dependencies & Start Server
+        run: |
+          cd backend
+          npm install
+          npm start &
+        env:
+          PORT: 5000
+
+      - name: Install Frontend Dependencies & Start Server
+        run: |
+          cd frontend
+          npm install
+          npm run dev -- --host &
+
+      - name: Wait for Servers to be Active
+        run: |
+          npx wait-on -t 60000 http://127.0.0.1:5000 http://127.0.0.1:5173
+
+      - name: Setup JavaScript Web E2E (Mocha & Selenium)
+        run: |
+          cd e2e
+          npm install
+          npm install mochawesome --save-dev
+
+      - name: Run JavaScript Web E2E Tests
+        run: |
+          cd e2e
+          npx mocha test/*.test.js --reporter mochawesome --reporter-options reportDir=reports,reportFilename=js-web-e2e,html=true,json=true
+        continue-on-error: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Dependencies
+        run: |
+          pip install selenium
+
+      - name: Run Python Web E2E Tests
+        run: |
+          mkdir -p e2e/reports
+          python e2e/e2e_tests.py > e2e/reports/python-web-e2e.log 2>&1
+
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Selenium-Web-E2E-Reports
+          path: |
+            e2e/reports/
+            e2e/mochawesome-report/
+          retention-days: 14
