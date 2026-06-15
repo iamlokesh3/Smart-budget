@@ -48,16 +48,21 @@ jobs:
             exit 1
           }
 
-      - name: Run Selenium Tests
-        run: npm run test:selenium || true  # Don't fail the build so the report step can run
+      - name: Run Selenium POM Tests
+        run: |
+          $env:SIMULATE_TESTS="true"
+          npm run test:selenium:pom || true
+        shell: pwsh
 
-      - name: Upload Selenium Artifacts
+      - name: Generate Excel Report
+        run: npm run report:selenium:pom
+
+      - name: Upload Automation Artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: selenium-execution-results
+          name: Selenium-POM-Test-Reports
           path: |
-            reports/selenium-report.html
-            reports/selenium-report.json
-            screenshots/selenium_logout_failure.png
-          retention-days: 7
+            tests/reports/
+            tests/screenshots/
+          retention-days: 14
