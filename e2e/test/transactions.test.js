@@ -9,7 +9,10 @@ describe('Transactions E2E Tests', function () {
 
   before(async function () {
     const options = new chrome.Options();
+    options.addArguments('--headless=new'); // Enable headless mode
     options.addArguments('--window-size=1280,800');
+    options.addArguments('--no-sandbox');
+    options.addArguments('--disable-dev-shm-usage');
     
     driver = await new Builder()
       .forBrowser('chrome')
