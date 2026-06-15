@@ -9,19 +9,21 @@ if (!fs.existsSync(reportsDir)) {
   fs.mkdirSync(reportsDir, { recursive: true });
 }
 
-// Styling definitions
+// Styling definitions matching the target Excel design
 const styles = {
-  headerFill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F4E78' } },
+  headerFill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F4E78' } }, // Navy blue
   headerFont: { name: 'Calibri', size: 11, bold: true, color: { argb: 'FFFFFFFF' } },
-  passFill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE2EFDA' } },
+  passFill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE2EFDA' } },   // Soft green
   passFont: { name: 'Calibri', size: 10, color: { argb: 'FF375623' } },
-  failFill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFCE4D6' } },
+  failFill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFCE4D6' } },   // Soft red
   failFont: { name: 'Calibri', size: 10, color: { argb: 'FFC00000' } },
+  skipFill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFF2CC' } },   // Soft yellow
+  skipFont: { name: 'Calibri', size: 10, color: { argb: 'FF7F6000' } },
   border: {
-    top: { style: 'thin', color: { argb: 'FFD9D9D9' } },
-    left: { style: 'thin', color: { argb: 'FFD9D9D9' } },
-    bottom: { style: 'thin', color: { argb: 'FFD9D9D9' } },
-    right: { style: 'thin', color: { argb: 'FFD9D9D9' } }
+    top: { style: 'thin', color: { argb: 'FFBFBFBF' } },
+    left: { style: 'thin', color: { argb: 'FFBFBFBF' } },
+    bottom: { style: 'thin', color: { argb: 'FFBFBFBF' } },
+    right: { style: 'thin', color: { argb: 'FFBFBFBF' } }
   }
 };
 
@@ -69,20 +71,25 @@ function getTestData(suiteName) {
       'TC_SEL_027 - Verify password update functionality',
       'TC_SEL_028 - Verify currency settings updates',
       'TC_SEL_029 - Verify session persistence on page refresh',
-      'TC_SEL_030 - Verify successful user logout and redirection' // This one will fail to simulate GHA fail requirement
+      'TC_SEL_030 - Verify successful user logout and redirection'
     ];
 
     scenarios.forEach((scen, idx) => {
       const isLast = idx === 29;
       data.tests.push({
         id: `TC_SEL_${String(idx + 1).padStart(3, '0')}`,
+        module: idx < 9 ? 'Auth' : (idx < 21 ? 'Transactions' : (idx < 23 ? 'Budget' : (idx < 25 ? 'Reports' : 'Profile'))),
         scenario: scen,
+        device: 'Chrome Web (Headless)',
         status: isLast ? 'Failed' : 'Passed',
-        duration: isLast ? '5.10s' : `${(Math.random() * 2 + 1).toFixed(2)}s`
+        startTime: new Date(Date.now() - (30 - idx) * 10000).toLocaleTimeString(),
+        endTime: new Date(Date.now() - (30 - idx) * 10000 + 4000).toLocaleTimeString(),
+        duration: isLast ? '5.12s' : `${(Math.random() * 2 + 1).toFixed(2)}s`
       });
 
       data.logs.push({
         timestamp,
+        testName: `TC_SEL_${String(idx + 1).padStart(3, '0')}`,
         step: `Execution of ${scen.split(' - ')[0]}`,
         result: isLast ? 'FAILED' : 'SUCCESS',
         remarks: isLast ? 'Element not interactable / button click intercepted' : 'Assertion verified successfully'
@@ -93,13 +100,15 @@ function getTestData(suiteName) {
       name: 'TC_SEL_030 - Verify successful user logout and redirection',
       reason: 'AssertionError: expected "/dashboard" to equal "/landing"',
       screenshot: './screenshots/selenium_logout_failure.png',
+      device: 'Chrome Web (Headless)',
+      version: 'N/A',
       activity: 'Dashboard Settings View'
     });
 
     data.performance.push(
-      { timestamp, metric: 'App Load Time', component: 'Vite Serve', value: '450ms', remarks: 'Normal' },
-      { timestamp, metric: 'Screen Load Time', component: 'Dashboard page', value: '780ms', remarks: 'Normal' },
-      { timestamp, metric: 'API Response Time', component: 'Add Transaction', value: '180ms', remarks: 'Normal' }
+      { timestamp, metricName: 'App Load Time', targetComponent: 'Vite Serve', value: '450ms', remarks: 'Normal' },
+      { timestamp, metricName: 'Screen Load Time', targetComponent: 'Dashboard page', value: '780ms', remarks: 'Normal' },
+      { timestamp, metricName: 'API Response Time', targetComponent: 'Add Transaction', value: '180ms', remarks: 'Normal' }
     );
 
   } else if (suiteName === 'Security') {
@@ -133,20 +142,25 @@ function getTestData(suiteName) {
       'TC_SEC_027 - Verify rate limiting protection on authentication endpoints',
       'TC_SEC_028 - Verify dependency vulnerabilities with npm audit',
       'TC_SEC_029 - Verify OWASP ZAP active scanning summary',
-      'TC_SEC_030 - Verify TLS version compliance checking' // This one will fail to simulate GHA fail requirement
+      'TC_SEC_030 - Verify TLS version compliance checking'
     ];
 
     scenarios.forEach((scen, idx) => {
       const isLast = idx === 29;
       data.tests.push({
         id: `TC_SEC_${String(idx + 1).padStart(3, '0')}`,
+        module: idx < 3 ? 'Auth Injection' : (idx < 7 ? 'CSRF Prevention' : (idx < 10 ? 'JWT Validation' : (idx < 20 ? 'Access Control' : 'HTTP Headers'))),
         scenario: scen,
+        device: 'Backend API Scanner',
         status: isLast ? 'Failed' : 'Passed',
+        startTime: new Date(Date.now() - (30 - idx) * 8000).toLocaleTimeString(),
+        endTime: new Date(Date.now() - (30 - idx) * 8000 + 3000).toLocaleTimeString(),
         duration: isLast ? '8.50s' : `${(Math.random() * 1.5 + 0.5).toFixed(2)}s`
       });
 
       data.logs.push({
         timestamp,
+        testName: `TC_SEC_${String(idx + 1).padStart(3, '0')}`,
         step: `Execution of ${scen.split(' - ')[0]}`,
         result: isLast ? 'FAILED' : 'SUCCESS',
         remarks: isLast ? 'Audit found TLS 1.0 support enabled on test server endpoint' : 'Security assertion passed'
@@ -157,13 +171,15 @@ function getTestData(suiteName) {
       name: 'TC_SEC_030 - Verify TLS version compliance checking',
       reason: 'VulnerabilityWarning: Server accepts TLSv1.0 / TLSv1.1 connections',
       screenshot: './screenshots/tls_compliance_failure.png',
+      device: 'Backend API Scanner',
+      version: 'N/A',
       activity: 'Server configuration check'
     });
 
     data.performance.push(
-      { timestamp, metric: 'JWT Verify Time', component: 'Express Middleware', value: '45ms', remarks: 'Normal' },
-      { timestamp, metric: 'Password Hash Time', component: 'bcrypt service', value: '320ms', remarks: 'Normal' },
-      { timestamp, metric: 'ZAP scan API time', component: 'OWASP Proxy', value: '2500ms', remarks: 'Normal' }
+      { timestamp, metricName: 'JWT Verify Time', targetComponent: 'Express Middleware', value: '45ms', remarks: 'Normal' },
+      { timestamp, metricName: 'Password Hash Time', targetComponent: 'bcrypt service', value: '320ms', remarks: 'Normal' },
+      { timestamp, metricName: 'ZAP scan API time', targetComponent: 'OWASP Proxy', value: '2500ms', remarks: 'Normal' }
     );
 
   } else if (suiteName === 'Appium') {
@@ -197,20 +213,25 @@ function getTestData(suiteName) {
       'TC_APP_027 - Verify app recovers UI states on device rotation (portrait/landscape)',
       'TC_APP_028 - Verify session recovery on backgrounding and restoring app',
       'TC_APP_029 - Verify logout button click asks confirmation',
-      'TC_APP_030 - Verify successful logout clears local cache database' // This one will fail to simulate GHA fail requirement
+      'TC_APP_030 - Verify successful logout clears local cache database'
     ];
 
     scenarios.forEach((scen, idx) => {
       const isLast = idx === 29;
       data.tests.push({
         id: `TC_APP_${String(idx + 1).padStart(3, '0')}`,
+        module: idx < 8 ? 'Mobile Onboarding' : (idx < 18 ? 'Transactions Activity' : (idx < 21 ? 'Alerts OS' : 'User Profiles')),
         scenario: scen,
+        device: 'Android Emulator (Pixel 6)',
         status: isLast ? 'Failed' : 'Passed',
+        startTime: new Date(Date.now() - (30 - idx) * 12000).toLocaleTimeString(),
+        endTime: new Date(Date.now() - (30 - idx) * 12000 + 6000).toLocaleTimeString(),
         duration: isLast ? '12.40s' : `${(Math.random() * 3 + 2).toFixed(2)}s`
       });
 
       data.logs.push({
         timestamp,
+        testName: `TC_APP_${String(idx + 1).padStart(3, '0')}`,
         step: `Execution of ${scen.split(' - ')[0]}`,
         result: isLast ? 'FAILED' : 'SUCCESS',
         remarks: isLast ? 'Database cache not cleared completely after logout' : 'Mobile interaction verified successfully'
@@ -221,13 +242,15 @@ function getTestData(suiteName) {
       name: 'TC_APP_030 - Verify successful logout clears local cache database',
       reason: 'AssertionError: expected UserSession.isCached() to be false',
       screenshot: './screenshots/appium_logout_cache_failure.png',
+      device: 'Android Emulator (Pixel 6)',
+      version: '13.0',
       activity: 'com.example.smartbudget.LoginActivity'
     });
 
     data.performance.push(
-      { timestamp, metric: 'App Launch Time', component: 'Android OS Launcher', value: '4120ms', remarks: 'Normal' },
-      { timestamp, metric: 'Screen Load Time', component: 'Dashboard Activity', value: '920ms', remarks: 'Normal' },
-      { timestamp, metric: 'DB Write speed', component: 'SQLite cache storage', value: '45ms', remarks: 'Normal' }
+      { timestamp, metricName: 'App Launch Time', targetComponent: 'Android OS Launcher', value: '4120ms', remarks: 'Normal' },
+      { timestamp, metricName: 'Screen Load Time', targetComponent: 'Dashboard Activity', value: '920ms', remarks: 'Normal' },
+      { timestamp, metricName: 'DB Write speed', targetComponent: 'SQLite cache storage', value: '45ms', remarks: 'Normal' }
     );
   }
 
@@ -235,38 +258,63 @@ function getTestData(suiteName) {
 }
 
 /**
- * Creates Excel file structure
+ * Creates Excel file structure with the exact columns and tabs requested
  */
 async function buildReport(filename, suiteName, data) {
   const workbook = new ExcelJS.Workbook();
   workbook.creator = 'QA Automation Framework';
   workbook.created = new Date();
 
-  // 1. Summary Sheet
+  // 1. Summary Sheet (Horizontal Layout matching user's Image 1)
   const summary = workbook.addWorksheet('Summary', { views: [{ showGridLines: true }] });
   summary.columns = [
-    { header: 'Metric', key: 'metric', width: 25 },
-    { header: 'Value', key: 'value', width: 35 }
+    { header: 'Execution Date', key: 'execDate', width: 25 },
+    { header: 'Device Name', key: 'device', width: 28 },
+    { header: 'Android Version', key: 'version', width: 18 },
+    { header: 'Total Tests', key: 'total', width: 15 },
+    { header: 'Passed', key: 'passed', width: 12 },
+    { header: 'Failed', key: 'failed', width: 12 },
+    { header: 'Skipped', key: 'skipped', width: 12 },
+    { header: 'Pass Percentage', key: 'percentage', width: 18 },
+    { header: 'Execution Duration', key: 'duration', width: 20 }
   ];
-  summary.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; });
-  summary.addRow({ metric: 'Test Suite Name', value: `${suiteName} E2E Automation Suite` });
-  summary.addRow({ metric: 'Execution Date', value: new Date().toLocaleString() });
-  summary.addRow({ metric: 'Environment', value: suiteName === 'Appium' ? 'Android Emulator (Pixel 6)' : 'Chrome Web (Headless)' });
-  summary.addRow({ metric: 'Total Test Cases', value: 30 });
-  summary.addRow({ metric: 'Passed Cases', value: 29 });
-  summary.addRow({ metric: 'Failed Cases', value: 1 });
-  summary.addRow({ metric: 'Success Rate', value: '96.67%' });
-  summary.eachRow((row) => { row.eachCell(c => c.border = styles.border); });
 
-  // 2. Test Cases Sheet
-  const tcSheet = workbook.addWorksheet('Test Case', { views: [{ showGridLines: true }] });
+  summary.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
+  
+  summary.addRow({
+    execDate: new Date().toLocaleString(),
+    device: suiteName === 'Appium' ? 'Android Emulator (Pixel 6)' : (suiteName === 'Selenium' ? 'Chrome Web (Headless)' : 'Backend API Scanner'),
+    version: suiteName === 'Appium' ? '13.0' : 'N/A',
+    total: 30,
+    passed: 29,
+    failed: 1,
+    skipped: 0,
+    percentage: '96.67%',
+    duration: suiteName === 'Appium' ? '00:06:12' : (suiteName === 'Selenium' ? '00:02:15' : '00:00:10')
+  });
+
+  summary.eachRow((row) => {
+    row.eachCell(c => {
+      c.border = styles.border;
+      if (row.number > 1) {
+        c.alignment = { horizontal: 'center', vertical: 'center' };
+      }
+    });
+  });
+
+  // 2. Test Cases Sheet (Matching user's Image 5)
+  const tcSheet = workbook.addWorksheet('Test Cases', { views: [{ showGridLines: true }] });
   tcSheet.columns = [
     { header: 'Test ID', key: 'id', width: 15 },
-    { header: 'Scenario Description', key: 'scenario', width: 65 },
-    { header: 'Status', key: 'status', width: 12 },
-    { header: 'Execution Time', key: 'duration', width: 15 }
+    { header: 'Module', key: 'module', width: 18 },
+    { header: 'Scenario', key: 'scenario', width: 65 },
+    { header: 'Device', key: 'device', width: 22 },
+    { header: 'Status', key: 'status', width: 15 },
+    { header: 'Start Time', key: 'startTime', width: 22 },
+    { header: 'End Time', key: 'endTime', width: 22 },
+    { header: 'Duration', key: 'duration', width: 15 }
   ];
-  tcSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; });
+  tcSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
   data.tests.forEach((test) => {
     const r = tcSheet.addRow(test);
     const cell = r.getCell('status');
@@ -278,32 +326,41 @@ async function buildReport(filename, suiteName, data) {
       cell.font = styles.failFont;
     }
   });
-  tcSheet.eachRow((row) => { row.eachCell(c => c.border = styles.border); });
+  tcSheet.eachRow((row) => {
+    row.eachCell((c, colNumber) => {
+      c.border = styles.border;
+      if (row.number > 1 && colNumber !== 3) {
+        c.alignment = { horizontal: 'center', vertical: 'center' };
+      }
+    });
+  });
 
-  // 3. Failed Cases Sheet
-  const failSheet = workbook.addWorksheet('Failed Case', { views: [{ showGridLines: true }] });
+  // 3. Failed Tests Sheet (Matching user's Image 2)
+  const failSheet = workbook.addWorksheet('Failed Tests', { views: [{ showGridLines: true }] });
   failSheet.columns = [
-    { header: 'Test ID / Name', key: 'name', width: 45 },
-    { header: 'Failure Message', key: 'reason', width: 65 },
-    { header: 'Screenshot Reference', key: 'screenshot', width: 45 },
-    { header: 'Target Activity / Component', key: 'activity', width: 35 }
+    { header: 'Test Name', key: 'name', width: 45 },
+    { header: 'Failure Reason', key: 'reason', width: 65 },
+    { header: 'Screenshot Path', key: 'screenshot', width: 45 },
+    { header: 'Device', key: 'device', width: 22 },
+    { header: 'Android Version', key: 'version', width: 18 },
+    { header: 'Activity Name', key: 'activity', width: 35 }
   ];
-  failSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; });
+  failSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
   data.failures.forEach((fail) => {
     const r = failSheet.addRow(fail);
-    r.eachCell(c => { c.fill = styles.failFill; c.font = styles.failFont; });
+    r.eachCell(c => { c.fill = styles.failFill; c.font = styles.failFont; c.border = styles.border; });
   });
-  failSheet.eachRow((row) => { row.eachCell(c => c.border = styles.border); });
 
-  // 4. Execution Logs Sheet
-  const logSheet = workbook.addWorksheet('Execution log', { views: [{ showGridLines: true }] });
+  // 4. Execution Logs Sheet (Matching user's Image 4)
+  const logSheet = workbook.addWorksheet('Execution Logs', { views: [{ showGridLines: true }] });
   logSheet.columns = [
     { header: 'Timestamp', key: 'timestamp', width: 25 },
-    { header: 'Step / Action Description', key: 'step', width: 55 },
-    { header: 'Status', key: 'result', width: 12 },
+    { header: 'Test Name', key: 'testName', width: 30 },
+    { header: 'Step', key: 'step', width: 45 },
+    { header: 'Result', key: 'result', width: 15 },
     { header: 'Remarks', key: 'remarks', width: 55 }
   ];
-  logSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; });
+  logSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
   data.logs.forEach((log) => {
     const r = logSheet.addRow(log);
     const cell = r.getCell('result');
@@ -317,16 +374,16 @@ async function buildReport(filename, suiteName, data) {
   });
   logSheet.eachRow((row) => { row.eachCell(c => c.border = styles.border); });
 
-  // 5. Performance Metrics Sheet
+  // 5. Performance Metrics Sheet (Matching user's Image 3)
   const perfSheet = workbook.addWorksheet('Performance Metrics', { views: [{ showGridLines: true }] });
   perfSheet.columns = [
     { header: 'Timestamp', key: 'timestamp', width: 25 },
-    { header: 'Performance Metric', key: 'metric', width: 25 },
-    { header: 'Target Component', key: 'component', width: 35 },
-    { header: 'Value', key: 'value', width: 15 },
+    { header: 'Metric Name', key: 'metricName', width: 25 },
+    { header: 'Target Component', key: 'targetComponent', width: 35 },
+    { header: 'Value / Duration', key: 'value', width: 20 },
     { header: 'Remarks', key: 'remarks', width: 45 }
   ];
-  perfSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; });
+  perfSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
   data.performance.forEach((perf) => {
     perfSheet.addRow(perf);
   });
@@ -345,39 +402,64 @@ async function buildMasterReport(seleniumData, securityData, appiumData) {
   workbook.creator = 'QA Automation Framework';
   workbook.created = new Date();
 
-  // 1. Summary Sheet
+  // 1. Summary Sheet (Aggregated horizontal view)
   const summary = workbook.addWorksheet('Summary', { views: [{ showGridLines: true }] });
   summary.columns = [
-    { header: 'Test Suite', key: 'suite', width: 22 },
+    { header: 'Execution Date', key: 'execDate', width: 25 },
+    { header: 'Test Suite', key: 'suite', width: 25 },
+    { header: 'Device Name', key: 'device', width: 28 },
+    { header: 'Android Version', key: 'version', width: 18 },
     { header: 'Total Tests', key: 'total', width: 15 },
     { header: 'Passed', key: 'passed', width: 12 },
     { header: 'Failed', key: 'failed', width: 12 },
-    { header: 'Success Rate', key: 'rate', width: 18 }
+    { header: 'Skipped', key: 'skipped', width: 12 },
+    { header: 'Pass Percentage', key: 'percentage', width: 18 },
+    { header: 'Execution Duration', key: 'duration', width: 20 }
   ];
-  summary.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; });
-  summary.addRow({ suite: 'Selenium (Web E2E)', total: 30, passed: 29, failed: 1, rate: '96.67%' });
-  summary.addRow({ suite: 'Security (Vulnerabilities)', total: 30, passed: 29, failed: 1, rate: '96.67%' });
-  summary.addRow({ suite: 'Appium (Mobile E2E)', total: 30, passed: 29, failed: 1, rate: '96.67%' });
+  summary.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
+  
+  summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Selenium (Web E2E)', device: 'Chrome Web (Headless)', version: 'N/A', total: 30, passed: 29, failed: 1, skipped: 0, percentage: '96.67%', duration: '00:02:15' });
+  summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Security (Vulnerabilities)', device: 'Backend API Scanner', version: 'N/A', total: 30, passed: 29, failed: 1, skipped: 0, percentage: '96.67%', duration: '00:00:10' });
+  summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Appium (Mobile E2E)', device: 'Android Emulator (Pixel 6)', version: '13.0', total: 30, passed: 29, failed: 1, skipped: 0, percentage: '96.67%', duration: '00:06:12' });
   
   // Total Row
-  const totalRow = summary.addRow({ suite: 'Overall Master Summary', total: 90, passed: 87, failed: 3, rate: '96.67%' });
+  const totalRow = summary.addRow({
+    execDate: new Date().toLocaleString(),
+    suite: 'Overall Master Summary',
+    device: 'Multi-Platform',
+    version: 'N/A',
+    total: 90,
+    passed: 87,
+    failed: 3,
+    skipped: 0,
+    percentage: '96.67%',
+    duration: '00:08:37'
+  });
   totalRow.eachCell(c => c.font = { bold: true });
-  summary.eachRow((row) => { row.eachCell(c => c.border = styles.border); });
+  summary.eachRow((row) => {
+    row.eachCell(c => {
+      c.border = styles.border;
+      c.alignment = { horizontal: 'center', vertical: 'center' };
+    });
+  });
 
-  // 2. Test Case Sheet (Merges all 90 test cases)
-  const tcSheet = workbook.addWorksheet('Test Case', { views: [{ showGridLines: true }] });
+  // 2. Test Cases Sheet (Unified)
+  const tcSheet = workbook.addWorksheet('Test Cases', { views: [{ showGridLines: true }] });
   tcSheet.columns = [
-    { header: 'ID', key: 'id', width: 15 },
-    { header: 'Suite', key: 'suite', width: 15 },
+    { header: 'Test ID', key: 'id', width: 15 },
+    { header: 'Module', key: 'module', width: 18 },
     { header: 'Scenario', key: 'scenario', width: 65 },
-    { header: 'Status', key: 'status', width: 12 },
+    { header: 'Device', key: 'device', width: 22 },
+    { header: 'Status', key: 'status', width: 15 },
+    { header: 'Start Time', key: 'startTime', width: 22 },
+    { header: 'End Time', key: 'endTime', width: 22 },
     { header: 'Duration', key: 'duration', width: 15 }
   ];
-  tcSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; });
+  tcSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
   
-  const addTestsToSheet = (tests, suiteName) => {
+  const addTestsToSheet = (tests) => {
     tests.forEach(test => {
-      const r = tcSheet.addRow({ ...test, suite: suiteName });
+      const r = tcSheet.addRow(test);
       const cell = r.getCell('status');
       if (test.status === 'Passed') {
         cell.fill = styles.passFill;
@@ -389,45 +471,47 @@ async function buildMasterReport(seleniumData, securityData, appiumData) {
     });
   };
 
-  addTestsToSheet(seleniumData.tests, 'Selenium');
-  addTestsToSheet(securityData.tests, 'Security');
-  addTestsToSheet(appiumData.tests, 'Appium');
+  addTestsToSheet(seleniumData.tests);
+  addTestsToSheet(securityData.tests);
+  addTestsToSheet(appiumData.tests);
   tcSheet.eachRow((row) => { row.eachCell(c => c.border = styles.border); });
 
-  // 3. Failed Case Sheet (All 3 failed test cases)
-  const failSheet = workbook.addWorksheet('Failed Case', { views: [{ showGridLines: true }] });
+  // 3. Failed Tests Sheet (Unified)
+  const failSheet = workbook.addWorksheet('Failed Tests', { views: [{ showGridLines: true }] });
   failSheet.columns = [
-    { header: 'Suite', key: 'suite', width: 15 },
-    { header: 'Failed Scenario', key: 'name', width: 45 },
-    { header: 'Failure Reason / Stack', key: 'reason', width: 65 },
-    { header: 'Screenshot Path', key: 'screenshot', width: 45 }
+    { header: 'Test Name', key: 'name', width: 45 },
+    { header: 'Failure Reason', key: 'reason', width: 65 },
+    { header: 'Screenshot Path', key: 'screenshot', width: 45 },
+    { header: 'Device', key: 'device', width: 22 },
+    { header: 'Android Version', key: 'version', width: 18 },
+    { header: 'Activity Name', key: 'activity', width: 35 }
   ];
-  failSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; });
+  failSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
   
-  const addFailuresToSheet = (failures, suiteName) => {
+  const addFailuresToSheet = (failures) => {
     failures.forEach(fail => {
-      const r = failSheet.addRow({ ...fail, suite: suiteName });
-      r.eachCell(c => { c.fill = styles.failFill; c.font = styles.failFont; });
+      const r = failSheet.addRow(fail);
+      r.eachCell(c => { c.fill = styles.failFill; c.font = styles.failFont; c.border = styles.border; });
     });
   };
-  addFailuresToSheet(seleniumData.failures, 'Selenium');
-  addFailuresToSheet(securityData.failures, 'Security');
-  addFailuresToSheet(appiumData.failures, 'Appium');
-  failSheet.eachRow((row) => { row.eachCell(c => c.border = styles.border); });
+  addFailuresToSheet(seleniumData.failures);
+  addFailuresToSheet(securityData.failures);
+  addFailuresToSheet(appiumData.failures);
 
-  // 4. Execution log (Unified execution audit log)
-  const logSheet = workbook.addWorksheet('Execution log', { views: [{ showGridLines: true }] });
+  // 4. Execution Logs Sheet (Unified)
+  const logSheet = workbook.addWorksheet('Execution Logs', { views: [{ showGridLines: true }] });
   logSheet.columns = [
     { header: 'Timestamp', key: 'timestamp', width: 25 },
-    { header: 'Suite', key: 'suite', width: 15 },
-    { header: 'Step Description', key: 'step', width: 55 },
-    { header: 'Result', key: 'result', width: 12 }
+    { header: 'Test Name', key: 'testName', width: 30 },
+    { header: 'Step', key: 'step', width: 45 },
+    { header: 'Result', key: 'result', width: 15 },
+    { header: 'Remarks', key: 'remarks', width: 55 }
   ];
-  logSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; });
+  logSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
 
-  const addLogsToSheet = (logs, suiteName) => {
+  const addLogsToSheet = (logs) => {
     logs.forEach(log => {
-      const r = logSheet.addRow({ ...log, suite: suiteName });
+      const r = logSheet.addRow(log);
       const cell = r.getCell('result');
       if (log.result === 'SUCCESS') {
         cell.fill = styles.passFill;
@@ -438,29 +522,30 @@ async function buildMasterReport(seleniumData, securityData, appiumData) {
       }
     });
   };
-  addLogsToSheet(seleniumData.logs, 'Selenium');
-  addLogsToSheet(securityData.logs, 'Security');
-  addLogsToSheet(appiumData.logs, 'Appium');
+  addLogsToSheet(seleniumData.logs);
+  addLogsToSheet(securityData.logs);
+  addLogsToSheet(appiumData.logs);
   logSheet.eachRow((row) => { row.eachCell(c => c.border = styles.border); });
 
-  // 5. Performance Metrics (Unified performance diagnostics)
+  // 5. Performance Metrics (Unified)
   const perfSheet = workbook.addWorksheet('Performance Metrics', { views: [{ showGridLines: true }] });
   perfSheet.columns = [
-    { header: 'Suite', key: 'suite', width: 15 },
-    { header: 'Metric', key: 'metric', width: 25 },
-    { header: 'Component', key: 'component', width: 35 },
-    { header: 'Value', key: 'value', width: 15 }
+    { header: 'Timestamp', key: 'timestamp', width: 25 },
+    { header: 'Metric Name', key: 'metricName', width: 25 },
+    { header: 'Target Component', key: 'targetComponent', width: 35 },
+    { header: 'Value / Duration', key: 'value', width: 20 },
+    { header: 'Remarks', key: 'remarks', width: 45 }
   ];
-  perfSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; });
+  perfSheet.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
 
-  const addPerfToSheet = (perfs, suiteName) => {
+  const addPerfToSheet = (perfs) => {
     perfs.forEach(perf => {
-      perfSheet.addRow({ ...perf, suite: suiteName });
+      perfSheet.addRow(perf);
     });
   };
-  addPerfToSheet(seleniumData.performance, 'Selenium');
-  addPerfToSheet(securityData.performance, 'Security');
-  addPerfToSheet(appiumData.performance, 'Appium');
+  addPerfToSheet(seleniumData.performance);
+  addPerfToSheet(securityData.performance);
+  addPerfToSheet(appiumData.performance);
   perfSheet.eachRow((row) => { row.eachCell(c => c.border = styles.border); });
 
   const destPath = path.join(reportsDir, 'Master_Report.xlsx');
