@@ -19,57 +19,53 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Install Backend Dependencies & Start Server
-        run: |
-          cd backend
-          npm install
-          npm start > ../backend.log 2>&1 &
-        env:
-          PORT: 5000
-
-      - name: Install Frontend Dependencies & Start Server
-        run: |
-          cd frontend
-          npm install
-          npm run dev -- --host > ../frontend.log 2>&1 &
-
-      - name: Wait for Servers to be Active
-        run: |
-          npx wait-on -t 60000 http://127.0.0.1:5000 http://127.0.0.1:5173
-
-      - name: Print Server Logs on Failure
-        if: failure()
-        run: |
-          echo "=== Backend Logs ==="
-          cat backend.log || true
-          echo "=== Frontend Logs ==="
-          cat frontend.log || true
-
-      - name: Setup JavaScript Web E2E (Mocha & Selenium)
-        run: |
-          cd e2e
-          npm install
-          npm install mochawesome --save-dev
-
-      - name: Run JavaScript Web E2E Tests
-        run: |
-          cd e2e
-          npx mocha test/*.test.js --reporter mochawesome --reporter-options reportDir=reports,reportFilename=js-web-e2e,html=true,json=true
-        continue-on-error: true
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install Python Dependencies
+      - name: Start Servers and Run E2E Tests
         run: |
-          pip install selenium
+          # 1. Install and start Backend
+          cd backend
+          npm install
+          npm start > ../backend.log 2>&1 &
+          cd ..
 
-      - name: Run Python Web E2E Tests
-        run: |
+          # 2. Install and start Frontend
+          cd frontend
+          npm install
+          npm run dev -- --host > ../frontend.log 2>&1 &
+          cd ..
+
+          # 3. Wait for servers to start (or print logs and fail)
+          npx wait-on -t 60000 http://localhost:5000 http://localhost:5173 || {
+            echo "=== Backend Logs ==="
+            cat backend.log || true
+            echo "=== Frontend Logs ==="
+            cat frontend.log || true
+            exit 1
+          }
+
+          # 4. Install and run JS E2E tests
+          cd e2e
+          npm install
+          npm install mochawesome --save-dev
+          npx mocha test/*.test.js --reporter mochawesome --reporter-options reportDir=reports,reportFilename=js-web-e2e,html=true,json=true || JS_FAILED=true
+          cd ..
+
+          # 5. Install Python dependencies and run Python E2E tests
+          pip install selenium
           mkdir -p e2e/reports
-          python e2e/e2e_tests.py > e2e/reports/python-web-e2e.log 2>&1
+          python e2e/e2e_tests.py > e2e/reports/python-web-e2e.log 2>&1 || PYTHON_FAILED=true
+
+          # 6. Exit with error if either failed
+          if [ "$JS_FAILED" = "true" ] || [ "$PYTHON_FAILED" = "true" ]; then
+            echo "One or more E2E test suites failed!"
+            exit 1
+          fi
+        env:
+          PORT: 5000
 
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4
