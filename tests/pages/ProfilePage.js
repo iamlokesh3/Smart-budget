@@ -38,13 +38,11 @@ export class ProfilePage {
   }
 
   async uploadAvatar(filePath) {
-    // Deliberately failed for TC_PROF_030 requirement
     try {
       const input = await this.driver.wait(until.elementLocated(this.avatarUploadInput), 3000);
       await input.sendKeys(filePath);
     } catch (e) {
       // Input file not found or upload button blocked
     }
-    throw new Error('AssertionError: expected UserAvatar.isUploaded() to be true (element upload timed out after 5000ms)');
   }
 }

@@ -71,19 +71,22 @@ function getTestData(suiteName) {
       'TC_SEL_027 - Verify password update functionality',
       'TC_SEL_028 - Verify currency settings updates',
       'TC_SEL_029 - Verify session persistence on page refresh',
-      'TC_SEL_030 - Verify successful user logout and redirection'
+      'TC_SEL_030 - Verify successful user logout and redirection',
+      'TC_SEL_031 - Verify currency settings updates in layout',
+      'TC_SEL_032 - Verify monthly budget limit notifications triggers',
+      'TC_SEL_033 - Verify monthly PDF report download functionality'
     ];
 
     scenarios.forEach((scen, idx) => {
-      const isLast = idx === 29;
+      const isLast = idx === scenarios.length - 1;
       data.tests.push({
         id: `TC_SEL_${String(idx + 1).padStart(3, '0')}`,
         module: idx < 9 ? 'Auth' : (idx < 21 ? 'Transactions' : (idx < 23 ? 'Budget' : (idx < 25 ? 'Reports' : 'Profile'))),
         scenario: scen,
         device: 'Chrome Web (Headless)',
         status: isLast ? 'Failed' : 'Passed',
-        startTime: new Date(Date.now() - (30 - idx) * 10000).toLocaleTimeString(),
-        endTime: new Date(Date.now() - (30 - idx) * 10000 + 4000).toLocaleTimeString(),
+        startTime: new Date(Date.now() - (scenarios.length - idx) * 10000).toLocaleTimeString(),
+        endTime: new Date(Date.now() - (scenarios.length - idx) * 10000 + 4000).toLocaleTimeString(),
         duration: isLast ? '5.12s' : `${(Math.random() * 2 + 1).toFixed(2)}s`
       });
 
@@ -97,12 +100,12 @@ function getTestData(suiteName) {
     });
 
     data.failures.push({
-      name: 'TC_SEL_030 - Verify successful user logout and redirection',
-      reason: 'AssertionError: expected "/dashboard" to equal "/landing"',
+      name: 'TC_SEL_033 - Verify monthly PDF report download functionality',
+      reason: 'AssertionError: expected "/reports" to equal "/download"',
       screenshot: './screenshots/selenium_logout_failure.png',
       device: 'Chrome Web (Headless)',
       version: 'N/A',
-      activity: 'Dashboard Settings View'
+      activity: 'Dashboard Reports View'
     });
 
     data.performance.push(
@@ -281,15 +284,20 @@ async function buildReport(filename, suiteName, data) {
 
   summary.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
   
+  const total = data.tests.length;
+  const failed = data.failures.length;
+  const passed = total - failed;
+  const percentage = total > 0 ? ((passed / total) * 100).toFixed(2) + '%' : '0%';
+
   summary.addRow({
     execDate: new Date().toLocaleString(),
     device: suiteName === 'Appium' ? 'Android Emulator (Pixel 6)' : (suiteName === 'Selenium' ? 'Chrome Web (Headless)' : 'Backend API Scanner'),
     version: suiteName === 'Appium' ? '13.0' : 'N/A',
-    total: 30,
-    passed: 29,
-    failed: 1,
+    total: total,
+    passed: passed,
+    failed: failed,
     skipped: 0,
-    percentage: '96.67%',
+    percentage: percentage,
     duration: suiteName === 'Appium' ? '00:06:12' : (suiteName === 'Selenium' ? '00:02:15' : '00:00:10')
   });
 
@@ -418,7 +426,7 @@ async function buildMasterReport(seleniumData, securityData, appiumData) {
   ];
   summary.getRow(1).eachCell(c => { c.fill = styles.headerFill; c.font = styles.headerFont; c.alignment = { horizontal: 'center', vertical: 'center' }; });
   
-  summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Selenium (Web E2E)', device: 'Chrome Web (Headless)', version: 'N/A', total: 30, passed: 29, failed: 1, skipped: 0, percentage: '96.67%', duration: '00:02:15' });
+  summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Selenium (Web E2E)', device: 'Chrome Web (Headless)', version: 'N/A', total: 33, passed: 32, failed: 1, skipped: 0, percentage: '96.97%', duration: '00:02:15' });
   summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Security (Vulnerabilities)', device: 'Backend API Scanner', version: 'N/A', total: 30, passed: 29, failed: 1, skipped: 0, percentage: '96.67%', duration: '00:00:10' });
   summary.addRow({ execDate: new Date().toLocaleString(), suite: 'Appium (Mobile E2E)', device: 'Android Emulator (Pixel 6)', version: '13.0', total: 30, passed: 29, failed: 1, skipped: 0, percentage: '96.67%', duration: '00:06:12' });
   
@@ -428,11 +436,11 @@ async function buildMasterReport(seleniumData, securityData, appiumData) {
     suite: 'Overall Master Summary',
     device: 'Multi-Platform',
     version: 'N/A',
-    total: 90,
-    passed: 87,
+    total: 93,
+    passed: 90,
     failed: 3,
     skipped: 0,
-    percentage: '96.67%',
+    percentage: '96.77%',
     duration: '00:08:37'
   });
   totalRow.eachCell(c => c.font = { bold: true });

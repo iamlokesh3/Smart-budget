@@ -103,9 +103,10 @@ export default function BudgetPlanner() {
       ) : (
         <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
           {budgets.map(b => {
+            const limit = b.amount || 0;
             const spent = getSpent(b.type);
-            const pct = Math.min(100, (spent / b.amount) * 100);
-            const over = spent > b.amount;
+            const pct = limit > 0 ? Math.min(100, (spent / limit) * 100) : 0;
+            const over = spent > limit;
             const hasTransactions = transactions.length > 0;
 
             return (
@@ -118,12 +119,12 @@ export default function BudgetPlanner() {
                       {over && <span className="badge badge-danger">Exceeded</span>}
                     </div>
                     <p style={{fontSize:'.875rem', marginTop:'.2rem'}}>
-                      Limit: <strong>{cur}{b.amount.toLocaleString('en-IN')}</strong>
+                      Limit: <strong>{cur}{limit.toLocaleString('en-IN')}</strong>
                       {hasTransactions && (
                         <> · Spent: <strong style={{color: over ? 'var(--danger)' : 'var(--text-primary)'}}>
                           {cur}{spent.toLocaleString('en-IN')}
                         </strong> · Remaining: <strong style={{color: over ? 'var(--danger)' : 'var(--emerald)'}}>
-                          {over ? `-${cur}${(spent - b.amount).toLocaleString('en-IN')}` : `${cur}${(b.amount - spent).toLocaleString('en-IN')}`}
+                          {over ? `-${cur}${(spent - limit).toLocaleString('en-IN')}` : `${cur}${(limit - spent).toLocaleString('en-IN')}`}
                         </strong></>
                       )}
                     </p>
