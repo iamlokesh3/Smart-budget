@@ -1,4 +1,4 @@
-# Enterprise Appium E2E Android Automation Frameworks
+# Enterprise Appium E2E Android Automation Framework
 
 This is a production-ready, enterprise-grade End-to-End (E2E) mobile test automation framework for Android applications built using **Appium 2.x**, **Node.js**, **WebdriverIO**, **Mocha**, and **Chai**.
 
