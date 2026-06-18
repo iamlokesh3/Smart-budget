@@ -212,47 +212,38 @@ jobs:
           echo "╠══════════════════════════════════════════╣"
 
           if [ -f reports/baseline_summary.json ]; then
-            python3 << 'EOF'
-import json, sys
-
-with open('reports/baseline_summary.json') as f:
-    data = json.load(f)
-
-m = data.get('metrics', {})
-
-# Overall response time
-dur   = m.get('http_req_duration', {}).get('values', {})
-err   = m.get('http_req_failed',   {}).get('values', {})
-reqs  = m.get('http_reqs',         {}).get('values', {})
-
-total    = int(reqs.get('count', 0))
-rps      = reqs.get('rate', 0)
-avg_ms   = dur.get('avg', 0)
-min_ms   = dur.get('min', 0)
-max_ms   = dur.get('max', 0)
-p90_ms   = dur.get('p(90)', 0)
-p95_ms   = dur.get('p(95)', 0)
-p99_ms   = dur.get('p(99)', 0)
-err_rate = err.get('rate', 0) * 100
-
-print(f"║  Total Requests    : {total:<21} ║")
-print(f"║  Requests/Second   : {rps:<21.1f} ║")
-print(f"║  ─────────────── Response Time ────────────── ║")
-print(f"║  Min               : {min_ms:<18.1f} ms  ║")
-print(f"║  Average           : {avg_ms:<18.1f} ms  ║")
-print(f"║  Median (P50)      : {dur.get('med',0):<18.1f} ms  ║")
-print(f"║  P90               : {p90_ms:<18.1f} ms  ║")
-print(f"║  P95               : {p95_ms:<18.1f} ms  ║")
-print(f"║  P99               : {p99_ms:<18.1f} ms  ║")
-print(f"║  Max               : {max_ms:<18.1f} ms  ║")
-print(f"║  ─────────────── Reliability ──────────────── ║")
-print(f"║  Error Rate        : {err_rate:<20.2f}%  ║")
-print(f"║  Success Rate      : {(100-err_rate):<20.2f}%  ║")
-print( "╚══════════════════════════════════════════╝")
-EOF
+            node -e "
+              const fs = require('fs');
+              const data = JSON.parse(fs.readFileSync('reports/baseline_summary.json', 'utf8'));
+              const metrics = data.metrics || {};
+              const dur = metrics.http_req_duration?.values || {};
+              const err = metrics.http_req_failed?.values || {};
+              const reqs = metrics.http_reqs?.values || {};
+              
+              const total = reqs.count || 0;
+              const rps = reqs.rate || 0;
+              const avg_ms = dur.avg || 0;
+              const min_ms = dur.min || 0;
+              const max_ms = dur.max || 0;
+              const p90_ms = dur['p(90)'] || 0;
+              const p95_ms = dur['p(95)'] || 0;
+              const p99_ms = dur['p(99)'] || 0;
+              const err_rate = (err.rate || 0) * 100;
+              
+              console.log('  Total Requests    : ' + total);
+              console.log('  Requests/Second   : ' + rps.toFixed(1));
+              console.log('  Min               : ' + min_ms.toFixed(1) + ' ms');
+              console.log('  Average           : ' + avg_ms.toFixed(1) + ' ms');
+              console.log('  Median (P50)      : ' + (dur.med || 0).toFixed(1) + ' ms');
+              console.log('  P90               : ' + p90_ms.toFixed(1) + ' ms');
+              console.log('  P95               : ' + p95_ms.toFixed(1) + ' ms');
+              console.log('  P99               : ' + p99_ms.toFixed(1) + ' ms');
+              console.log('  Max               : ' + max_ms.toFixed(1) + ' ms');
+              console.log('  Error Rate        : ' + err_rate.toFixed(2) + '%');
+              console.log('  Success Rate      : ' + (100 - err_rate).toFixed(2) + '%');
+            " 2>/dev/null || echo "  (Could not parse summary JSON)"
           else
-            echo "║  (summary JSON not found)                ║"
-            echo "╚══════════════════════════════════════════╝"
+            echo "  (summary JSON not found)"
           fi
 
       # ──────────────────────────────────────────────────────────────────────

@@ -302,22 +302,20 @@ jobs:
           echo ""
           if [ -f reports/full_load_summary_latest.json ]; then
             echo "  Full load summary available ✓"
-            # Extract key metrics using basic shell tools
-            cat reports/full_load_summary_latest.json | \
-              python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-metrics = data.get('metrics', {})
-duration = metrics.get('http_req_duration', {}).get('values', {})
-failed   = metrics.get('http_req_failed',   {}).get('values', {})
-reqs     = metrics.get('http_reqs',         {}).get('values', {})
-print(f\"  Total Requests: {int(reqs.get('count', 0))}\")
-print(f\"  Avg Duration:   {duration.get('avg', 0):.2f} ms\")
-print(f\"  P95 Duration:   {duration.get('p(95)', 0):.2f} ms\")
-print(f\"  P99 Duration:   {duration.get('p(99)', 0):.2f} ms\")
-print(f\"  Error Rate:     {failed.get('rate', 0)*100:.2f}%\")
-print(f\"  Req/s:          {reqs.get('rate', 0):.2f}\")
-" 2>/dev/null || echo "  (Could not parse summary JSON)"
+            node -e "
+              const fs = require('fs');
+              const data = JSON.parse(fs.readFileSync('reports/full_load_summary_latest.json', 'utf8'));
+              const metrics = data.metrics || {};
+              const duration = metrics.http_req_duration?.values || {};
+              const failed = metrics.http_req_failed?.values || {};
+              const reqs = metrics.http_reqs?.values || {};
+              console.log('  Total Requests: ' + (reqs.count || 0));
+              console.log('  Avg Duration:   ' + (duration.avg || 0).toFixed(2) + ' ms');
+              console.log('  P95 Duration:   ' + (duration['p(95)'] || 0).toFixed(2) + ' ms');
+              console.log('  P99 Duration:   ' + (duration['p(99)'] || 0).toFixed(2) + ' ms');
+              console.log('  Error Rate:     ' + ((failed.rate || 0) * 100).toFixed(2) + '%');
+              console.log('  Req/s:          ' + (reqs.rate || 0).toFixed(2));
+            " 2>/dev/null || echo "  (Could not parse summary JSON)"
           fi
           echo "========================================"
 
