@@ -2,6 +2,7 @@
  * BASELINE LOAD TEST — Smart Budget
  * ===================================
  * Exactly: 100 Virtual Users × 1 Minute
+ * Trigger: GitHub Actions Performance Baseline Scan
  *
  * APIs tested per iteration:
  *   1. POST /api/auth/login        (Authentication)
