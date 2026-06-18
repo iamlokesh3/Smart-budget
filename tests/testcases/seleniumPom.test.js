@@ -192,7 +192,17 @@ describe('Smart Budget v3 E2E Automation POM Suite', function () {
       }
 
       // Execute Page Object Actions for Passing Tests
-      if (tc.screen !== 'Landing' && tc.screen !== 'Auth') {
+      if (tc.screen === 'Landing') {
+        await loginPage.navigate();
+        const title = await global.driverInstance.getTitle();
+        expect(title).to.equal('Smart Budget v3');
+      } else if (tc.screen === 'Auth') {
+        await loginPage.navigate();
+        const emailEl = await global.driverInstance.findElement(loginPage.emailInput);
+        const pwEl = await global.driverInstance.findElement(loginPage.passwordInput);
+        expect(await emailEl.isDisplayed()).to.be.true;
+        expect(await pwEl.isDisplayed()).to.be.true;
+      } else {
         const sidebarLabel = getSidebarLabel(tc.screen);
         
         // Navigation using Sidebar POM
