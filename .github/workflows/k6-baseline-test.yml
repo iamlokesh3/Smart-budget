@@ -1,0 +1,378 @@
+# =============================================================================
+# Smart Budget — Baseline Load Test (100 VUs × 1 Minute)
+# =============================================================================
+# Triggers:
+#   ✅ Push to main or develop
+#   ✅ Pull requests to main
+#   ✅ Manual trigger (workflow_dispatch)
+#   ✅ Daily schedule at 03:00 UTC (08:30 IST)
+#
+# What this does:
+#   1. Starts the Express backend on port 5000
+#   2. Runs k6 with exactly 100 VUs for 1 minute against all APIs
+#   3. Collects: RPS, Avg/Min/Max/P95/P99 response time, error rate
+#   4. Generates Excel report (Baseline_Load_Test_Report.xlsx)
+#   5. Uploads report as a downloadable GitHub artifact
+#   6. Posts performance summary as a PR comment (on PRs)
+# =============================================================================
+
+name: Baseline Load Test — 100 VUs × 1 Min
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'performance/tests/baselineTest.js'
+      - 'performance/scripts/generateBaselineReport.js'
+      - 'backend/server.js'
+      - '.github/workflows/k6-baseline-test.yml'
+
+  pull_request:
+    branches: [main, develop]
+
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Backend URL (default: http://localhost:5000)'
+        required: false
+        default: 'http://localhost:5000'
+      vus:
+        description: 'Number of virtual users'
+        required: false
+        default: '100'
+
+  schedule:
+    - cron: '0 3 * * *'   # Daily at 03:00 UTC = 08:30 IST
+
+# =============================================================================
+env:
+  NODE_VERSION: '18'
+  BASE_URL: ${{ github.event.inputs.base_url || 'http://localhost:5000' }}
+
+# =============================================================================
+jobs:
+  baseline-load-test:
+    name: 🚀 Baseline Load Test (100 VUs × 1 Min)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # ──────────────────────────────────────────────────────────────────────
+      # 1. Checkout
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 2. Setup Node.js
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 🔧 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: performance/package-lock.json
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 3. Install k6
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 📦 Install k6
+        run: |
+          echo "Installing k6..."
+          sudo gpg -k
+          sudo gpg \
+            --no-default-keyring \
+            --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+            --keyserver hkp://keyserver.ubuntu.com:80 \
+            --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] \
+            https://dl.k6.io/deb stable main" \
+            | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update -qq
+          sudo apt-get install -y k6
+          echo ""
+          echo "k6 version:"
+          k6 version
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 4. Install backend + performance dependencies
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 📦 Install Backend Dependencies
+        working-directory: backend
+        run: |
+          echo "Installing backend dependencies..."
+          npm install
+          echo "✅ Backend deps installed"
+
+      - name: 📦 Install Performance Report Dependencies
+        working-directory: performance
+        run: |
+          echo "Installing performance package dependencies..."
+          npm install
+          echo "✅ Performance deps installed"
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 5. Create output directories
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 📁 Create Directories
+        working-directory: performance
+        run: |
+          mkdir -p reports/graphs
+          mkdir -p docs
+          echo "✅ Directories ready"
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 6. Start backend server
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 🔄 Start Backend Server
+        working-directory: backend
+        run: |
+          echo "Starting backend server..."
+          node server.js > /tmp/backend.log 2>&1 &
+          echo $! > /tmp/backend.pid
+          echo "Backend PID: $(cat /tmp/backend.pid)"
+
+          echo "Waiting for backend to be ready..."
+          for i in $(seq 1 20); do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+              http://localhost:5000/api/transactions \
+              -H 'x-user-id: 1781096350731' 2>/dev/null || echo "000")
+
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "✅ Backend ready after ${i} attempt(s) — HTTP $HTTP_CODE"
+              break
+            fi
+            echo "  Attempt ${i}/20: HTTP $HTTP_CODE — retrying in 2s..."
+            sleep 2
+          done
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 7. Health check
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 🏥 Backend Health Check
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            http://localhost:5000/api/transactions \
+            -H 'x-user-id: 1781096350731')
+          echo "Health check status: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Health check failed (status: $STATUS)"
+            echo "Backend log:"
+            cat /tmp/backend.log || true
+            exit 1
+          fi
+          echo "✅ Backend is healthy — starting load test"
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 8. Run k6 Baseline Load Test (100 VUs × 1 min)
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 🔥 Run Baseline Load Test (100 VUs × 1 min)
+        working-directory: performance
+        run: |
+          echo "=============================================="
+          echo "  k6 Baseline Load Test"
+          echo "  Virtual Users : 100"
+          echo "  Duration      : 1 minute"
+          echo "  Target        : ${{ env.BASE_URL }}"
+          echo "=============================================="
+
+          k6 run \
+            --env BASE_URL=${{ env.BASE_URL }} \
+            --out json=reports/baseline_raw.json \
+            --out csv=reports/results.csv \
+            tests/baselineTest.js
+
+          echo ""
+          echo "✅ k6 test complete"
+        # continue-on-error: true  — uncomment to not fail pipeline on SLA breach
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 9. Generate Excel Report
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 📊 Generate Excel Report
+        working-directory: performance
+        run: |
+          echo "Generating Excel report..."
+          node scripts/generateBaselineReport.js
+          echo ""
+          echo "Generated files:"
+          ls -lh reports/
+        continue-on-error: false
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 10. Print Performance Summary to console
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 📈 Print Performance Summary
+        working-directory: performance
+        run: |
+          echo ""
+          echo "╔══════════════════════════════════════════╗"
+          echo "║   Smart Budget — Baseline Load Test      ║"
+          echo "║   100 Virtual Users × 1 Minute           ║"
+          echo "╠══════════════════════════════════════════╣"
+
+          if [ -f reports/baseline_summary.json ]; then
+            python3 << 'EOF'
+import json, sys
+
+with open('reports/baseline_summary.json') as f:
+    data = json.load(f)
+
+m = data.get('metrics', {})
+
+# Overall response time
+dur   = m.get('http_req_duration', {}).get('values', {})
+err   = m.get('http_req_failed',   {}).get('values', {})
+reqs  = m.get('http_reqs',         {}).get('values', {})
+
+total    = int(reqs.get('count', 0))
+rps      = reqs.get('rate', 0)
+avg_ms   = dur.get('avg', 0)
+min_ms   = dur.get('min', 0)
+max_ms   = dur.get('max', 0)
+p90_ms   = dur.get('p(90)', 0)
+p95_ms   = dur.get('p(95)', 0)
+p99_ms   = dur.get('p(99)', 0)
+err_rate = err.get('rate', 0) * 100
+
+print(f"║  Total Requests    : {total:<21} ║")
+print(f"║  Requests/Second   : {rps:<21.1f} ║")
+print(f"║  ─────────────── Response Time ────────────── ║")
+print(f"║  Min               : {min_ms:<18.1f} ms  ║")
+print(f"║  Average           : {avg_ms:<18.1f} ms  ║")
+print(f"║  Median (P50)      : {dur.get('med',0):<18.1f} ms  ║")
+print(f"║  P90               : {p90_ms:<18.1f} ms  ║")
+print(f"║  P95               : {p95_ms:<18.1f} ms  ║")
+print(f"║  P99               : {p99_ms:<18.1f} ms  ║")
+print(f"║  Max               : {max_ms:<18.1f} ms  ║")
+print(f"║  ─────────────── Reliability ──────────────── ║")
+print(f"║  Error Rate        : {err_rate:<20.2f}%  ║")
+print(f"║  Success Rate      : {(100-err_rate):<20.2f}%  ║")
+print( "╚══════════════════════════════════════════╝")
+EOF
+          else
+            echo "║  (summary JSON not found)                ║"
+            echo "╚══════════════════════════════════════════╝"
+          fi
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 11. Upload Excel + CSV as artifacts
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 📤 Upload Excel Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Baseline-Load-Test-Report-${{ github.run_number }}
+          path: |
+            performance/reports/Baseline_Load_Test_Report.xlsx
+            performance/reports/results.csv
+            performance/reports/baseline_summary.json
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: 📤 Upload Raw k6 JSON
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-raw-data-${{ github.run_number }}
+          path: performance/reports/baseline_raw.json
+          retention-days: 30
+          if-no-files-found: ignore
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 12. Comment on Pull Request
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 💬 Comment Performance Results on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let stats = {
+              total: 'N/A', rps: 'N/A', avg: 'N/A', min: 'N/A',
+              max: 'N/A', p95: 'N/A', p99: 'N/A', errRate: 'N/A', successRate: 'N/A'
+            };
+
+            try {
+              const raw  = fs.readFileSync('performance/reports/baseline_summary.json', 'utf8');
+              const data = JSON.parse(raw);
+              const m    = data.metrics || {};
+              const dur  = m.http_req_duration?.values || {};
+              const err  = m.http_req_failed?.values   || {};
+              const reqs = m.http_reqs?.values          || {};
+
+              const errRateNum = (err.rate || 0) * 100;
+              stats = {
+                total:       (reqs.count || 0).toLocaleString(),
+                rps:         (reqs.rate  || 0).toFixed(1),
+                avg:         (dur.avg    || 0).toFixed(0) + ' ms',
+                min:         (dur.min    || 0).toFixed(0) + ' ms',
+                max:         (dur.max    || 0).toFixed(0) + ' ms',
+                p90:         (dur['p(90)'] || 0).toFixed(0) + ' ms',
+                p95:         (dur['p(95)'] || 0).toFixed(0) + ' ms',
+                p99:         (dur['p(99)'] || 0).toFixed(0) + ' ms',
+                errRate:     errRateNum.toFixed(2) + '%',
+                successRate: (100 - errRateNum).toFixed(2) + '%',
+              };
+            } catch (e) {
+              console.log('Could not parse summary:', e.message);
+            }
+
+            const p95Val = parseFloat(stats.p95);
+            const errVal = parseFloat(stats.errRate);
+            const p95Ok  = isNaN(p95Val) || p95Val < 2000;
+            const errOk  = isNaN(errVal) || errVal < 5;
+
+            const body = `## 🚀 Baseline Load Test Results — 100 VUs × 1 Minute
+
+> **Workflow:** \`${context.workflow}\`  |  **Run:** [#${context.runNumber}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})  |  **Commit:** \`${context.sha.slice(0, 7)}\`
+
+### ⚡ Key Metrics
+
+| Metric | Value |
+|--------|-------|
+| 📦 Total Requests | **${stats.total}** |
+| ⚡ Requests / Second | **${stats.rps} req/s** |
+| ✅ Success Rate | **${stats.successRate}** |
+| ❌ Error Rate | **${stats.errRate}** |
+
+### ⏱ Response Time
+
+| Percentile | Latency | SLA | Status |
+|-----------|---------|-----|--------|
+| Minimum | ${stats.min} | — | — |
+| Average | ${stats.avg} | < 1000 ms | ${parseFloat(stats.avg) < 1000 ? '✅' : '❌'} |
+| P90 | ${stats.p90} | — | — |
+| **P95** | **${stats.p95}** | < 2000 ms | ${p95Ok ? '✅ PASS' : '❌ FAIL'} |
+| P99 | ${stats.p99} | < 5000 ms | ${parseFloat(stats.p99) < 5000 ? '✅ PASS' : '❌ FAIL'} |
+| Maximum | ${stats.max} | — | — |
+
+### 📁 Download Report
+
+The full **Excel report** (`Baseline_Load_Test_Report.xlsx`) with 4 sheets is available in the **[Artifacts](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})** section.
+
+---
+*Generated by Smart Budget k6 Performance Framework · [View Workflow](.github/workflows/k6-baseline-test.yml)*`;
+
+            await github.rest.issues.createComment({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+            console.log('✅ PR comment posted');
+
+      # ──────────────────────────────────────────────────────────────────────
+      # 13. Stop backend
+      # ──────────────────────────────────────────────────────────────────────
+      - name: 🛑 Stop Backend Server
+        if: always()
+        run: |
+          if [ -f /tmp/backend.pid ]; then
+            PID=$(cat /tmp/backend.pid)
+            kill "$PID" 2>/dev/null && echo "✅ Backend stopped (PID $PID)" || echo "Backend already stopped"
+          fi
+          echo ""
+          echo "Backend log (last 20 lines):"
+          tail -20 /tmp/backend.log 2>/dev/null || echo "(no log)"

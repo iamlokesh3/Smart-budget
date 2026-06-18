@@ -204,6 +204,43 @@ app.delete('/api/goals/:id', auth, async (req, res) => {
   res.json({ success: true });
 });
 
+// --- AI ADVISOR ---
+// Lightweight rule-based financial advisor endpoint.
+// Processes financial keyword queries and returns contextual advice.
+app.post('/api/ai/chat', auth, async (req, res) => {
+  const { message } = req.body;
+  if (!message || typeof message !== 'string') {
+    return res.status(400).json({ error: 'message field is required' });
+  }
+
+  const lower = message.toLowerCase();
+
+  // Basic keyword-driven responses (no external AI dependency)
+  let reply = 'I can help with budgeting, expenses, savings goals, and financial planning. What would you like to know?';
+
+  if (lower.includes('spend') || lower.includes('expense')) {
+    reply = 'To reduce spending: track every expense, categorise them, and identify areas where you can cut back by 10-20%.';
+  } else if (lower.includes('save') || lower.includes('saving')) {
+    reply = 'A good rule of thumb: save at least 20% of your income. Start with an emergency fund covering 3-6 months of expenses.';
+  } else if (lower.includes('budget')) {
+    reply = 'Try the 50/30/20 rule: 50% needs, 30% wants, 20% savings. Review your budget monthly and adjust as needed.';
+  } else if (lower.includes('goal')) {
+    reply = 'For savings goals: define a target amount, set a deadline, and automate monthly contributions to reach it on time.';
+  } else if (lower.includes('invest')) {
+    reply = 'Before investing, build an emergency fund. Then consider index funds for long-term wealth creation.';
+  } else if (lower.includes('debt') || lower.includes('loan')) {
+    reply = 'Prioritise high-interest debt first (avalanche method). Pay minimums on all debts, then throw extra at the highest rate.';
+  } else if (lower.includes('trend') || lower.includes('analysis') || lower.includes('analyse')) {
+    reply = 'Check your dashboard for spending trends. Compare this month to last month across categories to spot patterns.';
+  }
+
+  res.json({
+    reply,
+    timestamp: new Date().toISOString(),
+    model: 'smart-budget-advisor-v1',
+  });
+});
+
 initDB().then(() => {
   app.listen(PORT, () => console.log(`Backend server running on http://localhost:${PORT}`));
 });

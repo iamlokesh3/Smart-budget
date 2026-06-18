@@ -1,0 +1,40 @@
+{
+  "name": "smart-budget-performance-tests",
+  "version": "1.0.0",
+  "description": "k6 Performance & Load Testing Framework for Smart Budget Web + Android",
+  "author": "Smart Budget Team",
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "preinstall:check": "node -e \"const v=process.version.slice(1).split('.');if(+v[0]<16)throw new Error('Node 16+ required');\"",
+
+    "test:baseline": "k6 run --out json=reports/baseline_raw.json --out csv=reports/results.csv tests/baselineTest.js",
+    "report:baseline": "node scripts/generateBaselineReport.js",
+    "baseline": "npm run test:baseline && npm run report:baseline",
+
+    "test:smoke":  "k6 run --env SCENARIO=smoke  --out csv=reports/results.csv --out json=reports/smoke_raw.json  tests/fullLoadTest.js",
+    "test:load":   "k6 run --env SCENARIO=load   --out csv=reports/results.csv --out json=reports/load_raw.json   tests/fullLoadTest.js",
+    "test:stress": "k6 run --env SCENARIO=stress --out csv=reports/results.csv --out json=reports/stress_raw.json tests/fullLoadTest.js",
+    "test:spike":  "k6 run --env SCENARIO=spike  --out csv=reports/results.csv --out json=reports/spike_raw.json  tests/fullLoadTest.js",
+    "test:full":   "k6 run --env SCENARIO=full   --out csv=reports/results.csv --out json=reports/full_raw.json   tests/fullLoadTest.js",
+
+    "test:login":        "k6 run --out csv=reports/results.csv tests/loginTest.js",
+    "test:registration": "k6 run --out csv=reports/results.csv tests/registrationTest.js",
+    "test:dashboard":    "k6 run --out csv=reports/results.csv tests/dashboardTest.js",
+    "test:expense":      "k6 run --out csv=reports/results.csv tests/expenseTest.js",
+    "test:budget":       "k6 run --out csv=reports/results.csv tests/budgetTest.js",
+    "test:ai":           "k6 run --out csv=reports/results.csv tests/aiAdvisorTest.js",
+
+    "report:generate": "node scripts/generateReport.js",
+    "docs:generate":   "node scripts/generateDocs.js",
+
+    "report:all": "npm run report:generate && npm run docs:generate",
+
+    "run:all": "npm run test:login && npm run test:registration && npm run test:dashboard && npm run test:expense && npm run test:budget && npm run test:ai && npm run report:all"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "docx":    "^8.5.0"
+  },
+  "devDependencies": {}
+}

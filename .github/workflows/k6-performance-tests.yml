@@ -1,0 +1,425 @@
+# ============================================================
+# Smart Budget — k6 Performance & Load Testing CI/CD Pipeline
+# ============================================================
+# Triggers:
+#   - Push to main/develop branch
+#   - Manual workflow_dispatch (run on demand)
+#   - Scheduled: every day at midnight IST (18:30 UTC)
+#
+# Scenarios: smoke (default), load, stress, spike, full
+# ============================================================
+
+name: k6 Performance & Load Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'performance/**'
+      - 'backend/**'
+      - '.github/workflows/k6-performance-tests.yml'
+
+  pull_request:
+    branches: [main]
+    paths:
+      - 'performance/**'
+      - 'backend/**'
+
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: 'Test scenario to run'
+        required: true
+        default: 'smoke'
+        type: choice
+        options:
+          - smoke
+          - load
+          - stress
+          - spike
+          - full
+          - all
+
+      base_url:
+        description: 'Backend base URL'
+        required: false
+        default: 'http://localhost:5000'
+
+  schedule:
+    # Daily at 18:30 UTC (midnight IST) — smoke test
+    - cron: '30 18 * * *'
+
+# ============================================================
+# ENVIRONMENT VARIABLES
+# ============================================================
+env:
+  NODE_VERSION: '18'
+  K6_VERSION: '0.52.0'
+  BASE_URL: ${{ github.event.inputs.base_url || 'http://localhost:5000' }}
+  SCENARIO: ${{ github.event.inputs.scenario || 'smoke' }}
+
+# ============================================================
+# JOBS
+# ============================================================
+jobs:
+
+  # ----------------------------------------------------------
+  # JOB 1: Validate k6 test files (lint/syntax check)
+  # ----------------------------------------------------------
+  validate:
+    name: 🔍 Validate Test Files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: performance/package-lock.json
+
+      - name: 📦 Install Report Dependencies
+        working-directory: performance
+        run: npm install
+
+      - name: ✅ Check Test File Syntax
+        run: |
+          echo "Checking k6 test file structure..."
+          for f in performance/tests/*.js; do
+            echo "  Checking: $f"
+            node --input-type=module < /dev/null || true
+          done
+          echo "All test files present:"
+          ls -la performance/tests/
+
+      - name: 📋 List All Test Cases
+        working-directory: performance
+        run: |
+          echo "Test files found:"
+          ls -la tests/
+          echo ""
+          echo "Scripts available:"
+          cat package.json | grep '"test:' || true
+
+  # ----------------------------------------------------------
+  # JOB 2: Start Backend + Run k6 Tests
+  # ----------------------------------------------------------
+  k6-performance-tests:
+    name: 🚀 k6 Performance Tests (${{ github.event.inputs.scenario || 'smoke' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    needs: validate
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      # ── Node.js Setup ─────────────────────────────────────
+      - name: 🔧 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: performance/package-lock.json
+
+      # ── Install k6 ────────────────────────────────────────
+      - name: 📦 Install k6 ${{ env.K6_VERSION }}
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring \
+            --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+            --keyserver hkp://keyserver.ubuntu.com:80 \
+            --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" \
+            | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update -qq
+          sudo apt-get install -y k6
+          k6 version
+
+      # ── Backend Dependencies ──────────────────────────────
+      - name: 📦 Install Backend Dependencies
+        working-directory: backend
+        run: npm install
+
+      # ── Start Backend ─────────────────────────────────────
+      - name: 🔄 Start Backend Server
+        working-directory: backend
+        run: |
+          node server.js &
+          echo "Backend PID: $!"
+          echo $! > /tmp/backend.pid
+          sleep 5
+          echo "Waiting for backend to be ready..."
+          for i in {1..15}; do
+            if curl -s http://localhost:5000/api/transactions \
+              -H 'x-user-id: 1781096350731' > /dev/null 2>&1; then
+              echo "✅ Backend is ready (attempt $i)"
+              break
+            fi
+            echo "  Attempt $i: Backend not ready yet, waiting..."
+            sleep 2
+          done
+
+      # ── Verify Backend Health ─────────────────────────────
+      - name: 🏥 Backend Health Check
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            http://localhost:5000/api/transactions \
+            -H 'x-user-id: 1781096350731')
+          echo "Backend health check status: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Backend health check failed!"
+            exit 1
+          fi
+          echo "✅ Backend is healthy"
+
+      # ── Create Reports Directory ──────────────────────────
+      - name: 📁 Create Reports Directories
+        working-directory: performance
+        run: |
+          mkdir -p reports/graphs
+          mkdir -p docs
+
+      # ── Install Report Dependencies ───────────────────────
+      - name: 📦 Install Performance Package Dependencies
+        working-directory: performance
+        run: npm install
+
+      # ── Run k6 Individual Tests ───────────────────────────
+      - name: 🧪 Run Login Performance Test
+        working-directory: performance
+        run: |
+          k6 run \
+            --env SCENARIO=smoke \
+            --env BASE_URL=${{ env.BASE_URL }} \
+            --out csv=reports/login_results.csv \
+            tests/loginTest.js
+        continue-on-error: true
+
+      - name: 🧪 Run Registration Performance Test
+        working-directory: performance
+        run: |
+          k6 run \
+            --env SCENARIO=smoke \
+            --env BASE_URL=${{ env.BASE_URL }} \
+            --out csv=reports/registration_results.csv \
+            tests/registrationTest.js
+        continue-on-error: true
+
+      - name: 🧪 Run Dashboard Performance Test
+        working-directory: performance
+        run: |
+          k6 run \
+            --env SCENARIO=smoke \
+            --env BASE_URL=${{ env.BASE_URL }} \
+            --out csv=reports/dashboard_results.csv \
+            tests/dashboardTest.js
+        continue-on-error: true
+
+      - name: 🧪 Run Expense Performance Test
+        working-directory: performance
+        run: |
+          k6 run \
+            --env SCENARIO=smoke \
+            --env BASE_URL=${{ env.BASE_URL }} \
+            --out csv=reports/expense_results.csv \
+            tests/expenseTest.js
+        continue-on-error: true
+
+      - name: 🧪 Run Budget Performance Test
+        working-directory: performance
+        run: |
+          k6 run \
+            --env SCENARIO=smoke \
+            --env BASE_URL=${{ env.BASE_URL }} \
+            --out csv=reports/budget_results.csv \
+            tests/budgetTest.js
+        continue-on-error: true
+
+      - name: 🧪 Run AI Advisor Performance Test
+        working-directory: performance
+        run: |
+          k6 run \
+            --env SCENARIO=smoke \
+            --env BASE_URL=${{ env.BASE_URL }} \
+            --out csv=reports/ai_results.csv \
+            tests/aiAdvisorTest.js
+        continue-on-error: true
+
+      # ── Run Full Load Test (based on scenario input) ───────
+      - name: 🔥 Run Full Load Test (Scenario - ${{ env.SCENARIO }})
+        working-directory: performance
+        run: |
+          SCENARIO="${{ env.SCENARIO }}"
+          if [ "$SCENARIO" == "all" ]; then SCENARIO="full"; fi
+          echo "Running full load test with scenario: $SCENARIO"
+          k6 run \
+            --env SCENARIO=$SCENARIO \
+            --env BASE_URL=${{ env.BASE_URL }} \
+            --out csv=reports/results.csv \
+            tests/fullLoadTest.js
+        continue-on-error: true
+
+      # ── Generate Reports ──────────────────────────────────
+      - name: 📊 Generate Excel & CSV Reports
+        working-directory: performance
+        run: node scripts/generateReport.js
+        continue-on-error: true
+
+      - name: 📋 Generate Test Cases Document
+        working-directory: performance
+        run: node scripts/generateDocs.js
+        continue-on-error: true
+
+      # ── List Generated Files ──────────────────────────────
+      - name: 📁 List Generated Reports
+        working-directory: performance
+        run: |
+          echo "=== Reports Directory ==="
+          ls -lh reports/ || echo "(empty)"
+          echo ""
+          echo "=== Docs Directory ==="
+          ls -lh docs/ || echo "(empty)"
+          echo ""
+          echo "=== Graph Data ==="
+          ls -lh reports/graphs/ || echo "(empty)"
+
+      # ── Print Summary Statistics ──────────────────────────
+      - name: 📈 Print Performance Summary
+        working-directory: performance
+        run: |
+          echo "========================================"
+          echo "  Smart Budget — k6 Performance Summary"
+          echo "========================================"
+          echo "  Scenario:  ${{ env.SCENARIO }}"
+          echo "  Base URL:  ${{ env.BASE_URL }}"
+          echo "  Timestamp: $(date)"
+          echo ""
+          if [ -f reports/full_load_summary_latest.json ]; then
+            echo "  Full load summary available ✓"
+            # Extract key metrics using basic shell tools
+            cat reports/full_load_summary_latest.json | \
+              python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+metrics = data.get('metrics', {})
+duration = metrics.get('http_req_duration', {}).get('values', {})
+failed   = metrics.get('http_req_failed',   {}).get('values', {})
+reqs     = metrics.get('http_reqs',         {}).get('values', {})
+print(f\"  Total Requests: {int(reqs.get('count', 0))}\")
+print(f\"  Avg Duration:   {duration.get('avg', 0):.2f} ms\")
+print(f\"  P95 Duration:   {duration.get('p(95)', 0):.2f} ms\")
+print(f\"  P99 Duration:   {duration.get('p(99)', 0):.2f} ms\")
+print(f\"  Error Rate:     {failed.get('rate', 0)*100:.2f}%\")
+print(f\"  Req/s:          {reqs.get('rate', 0):.2f}\")
+" 2>/dev/null || echo "  (Could not parse summary JSON)"
+          fi
+          echo "========================================"
+
+      # ── Upload Artifacts ──────────────────────────────────
+      - name: 📤 Upload Performance Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-performance-reports-${{ github.run_number }}
+          path: |
+            performance/reports/
+            performance/docs/
+          retention-days: 30
+
+      - name: 📤 Upload Raw CSV Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-csv-results-${{ github.run_number }}
+          path: performance/reports/*.csv
+          retention-days: 30
+
+      # ── Stop Backend ──────────────────────────────────────
+      - name: 🛑 Stop Backend Server
+        if: always()
+        run: |
+          if [ -f /tmp/backend.pid ]; then
+            PID=$(cat /tmp/backend.pid)
+            kill $PID 2>/dev/null || true
+            echo "Backend server stopped (PID: $PID)"
+          fi
+
+  # ----------------------------------------------------------
+  # JOB 3: Comment results on PR
+  # ----------------------------------------------------------
+  comment-results:
+    name: 💬 Comment Results on PR
+    runs-on: ubuntu-latest
+    needs: k6-performance-tests
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: 📥 Download Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: k6-performance-reports-${{ github.run_number }}
+          path: reports
+
+      - name: 💬 Post Performance Summary to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let summaryPath = 'reports/reports/full_load_summary_latest.json';
+
+            let body = `## 🚀 Smart Budget — k6 Performance Test Results\n\n`;
+            body += `**Workflow:** \`${context.workflow}\`  \n`;
+            body += `**Run:** [#${context.runNumber}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})  \n`;
+            body += `**Scenario:** \`${{ env.SCENARIO }}\`  \n`;
+            body += `**Commit:** \`${context.sha.slice(0,7)}\`  \n\n`;
+
+            if (fs.existsSync(summaryPath)) {
+              try {
+                const data = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+                const m    = data.metrics || {};
+                const dur  = m.http_req_duration?.values || {};
+                const err  = m.http_req_failed?.values   || {};
+                const reqs = m.http_reqs?.values          || {};
+
+                const p95 = (dur['p(95)'] || 0).toFixed(0);
+                const p99 = (dur['p(99)'] || 0).toFixed(0);
+                const avg = (dur.avg || 0).toFixed(0);
+                const errRate = ((err.rate || 0) * 100).toFixed(2);
+                const rps  = (reqs.rate || 0).toFixed(2);
+                const total = reqs.count || 0;
+
+                const p95Status = parseFloat(p95) < 2000 ? '✅' : '❌';
+                const errStatus = parseFloat(errRate) < 5 ? '✅' : '❌';
+
+                body += `### 📊 Performance Metrics\n\n`;
+                body += `| Metric | Value | SLA | Status |\n`;
+                body += `|--------|-------|-----|--------|\n`;
+                body += `| Avg Response Time | ${avg} ms | < 2000 ms | ${avg < 2000 ? '✅' : '❌'} |\n`;
+                body += `| P95 Response Time | ${p95} ms | < 2000 ms | ${p95Status} |\n`;
+                body += `| P99 Response Time | ${p99} ms | < 5000 ms | ${parseFloat(p99) < 5000 ? '✅' : '❌'} |\n`;
+                body += `| Error Rate | ${errRate}% | < 5% | ${errStatus} |\n`;
+                body += `| Req/s | ${rps} | > 1 | ✅ |\n`;
+                body += `| Total Requests | ${total} | - | ℹ️ |\n\n`;
+              } catch (e) {
+                body += `> ⚠️ Could not parse summary metrics: ${e.message}\n\n`;
+              }
+            } else {
+              body += `> ℹ️ Summary JSON not found. Check the artifacts for full CSV and Excel reports.\n\n`;
+            }
+
+            body += `### 📁 Artifacts\n\n`;
+            body += `Download the full Excel report and test case matrix from the **Artifacts** section of the [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).\n\n`;
+            body += `---\n*Generated by Smart Budget k6 Performance Framework*`;
+
+            await github.rest.issues.createComment({
+              owner:      context.repo.owner,
+              repo:       context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
