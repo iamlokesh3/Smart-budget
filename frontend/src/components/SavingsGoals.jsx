@@ -1,5 +1,5 @@
-import { useState, useContext } from 'react';
-import { AppContext } from '../context/AppContext';
+import { useState } from 'react';
+import { useApp } from '../context/AppContext';
 import { 
   Plus, 
   PiggyBank, 
@@ -12,13 +12,29 @@ import {
 
 const SavingsGoals = () => {
   const { 
-    savingsGoals, 
-    addSavingsGoal, 
-    editSavingsGoal, 
-    deleteSavingsGoal, 
-    addSavingsToGoal, 
-    formatCurrencyVal 
-  } = useContext(AppContext);
+    goals, 
+    addGoal, 
+    updateGoal, 
+    deleteGoal, 
+    currency
+  } = useApp();
+
+  const savingsGoals = (goals || []).map(g => ({
+    ...g,
+    title: g.name || g.title,
+    saved: g.current !== undefined ? g.current : (g.saved || 0)
+  }));
+
+  const addSavingsGoal = (g) => addGoal({ name: g.title, target: Number(g.target), current: Number(g.saved || 0) });
+  const editSavingsGoal = (id, g) => updateGoal(id, { name: g.title, target: Number(g.target), current: Number(g.saved) });
+  const deleteSavingsGoal = (id) => deleteGoal(id);
+  const addSavingsToGoal = (id, amount) => {
+    const goal = goals.find(g => g.id === id);
+    if (goal) {
+      updateGoal(id, { current: Number(goal.current || 0) + Number(amount) });
+    }
+  };
+  const formatCurrencyVal = (val) => (currency || '₹') + Number(val).toLocaleString('en-IN');
 
   // Modal controls
   const [showAddModal, setShowAddModal] = useState(false);

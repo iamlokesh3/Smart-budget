@@ -1,5 +1,5 @@
-import { useState, useContext } from 'react';
-import { AppContext } from '../context/AppContext';
+import { useState } from 'react';
+import { useApp } from '../context/AppContext';
 import { parseNaturalLanguageTransaction, scanReceiptMock } from '../utils/aiAdvisor';
 import { 
   Plus, 
@@ -18,11 +18,13 @@ const Transactions = () => {
   const { 
     transactions, 
     addTransaction, 
-    editTransaction, 
-    deleteTransaction, 
-    formatCurrencyVal,
-    triggerToast
-  } = useContext(AppContext);
+    updateTransaction: editTransaction, 
+    deleteTransaction,
+    currency
+  } = useApp();
+
+  const formatCurrencyVal = (val) => (currency || '₹') + Number(val).toLocaleString('en-IN');
+  const triggerToast = (msg, type) => console.log(`[Toast ${type}]: ${msg}`);
 
   // Input states
   const [nlInput, setNlInput] = useState('');

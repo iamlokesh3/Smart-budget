@@ -17,6 +17,35 @@ import HealthScore  from './components/HealthScore';
 import Profile      from './components/Profile';
 import Settings     from './components/Settings';
 
+// New Screens (27)
+import Transactions         from './components/Transactions';
+import SavingsGoals         from './components/SavingsGoals';
+import EmiCalculator        from './components/EmiCalculator';
+import CurrencyConverter    from './components/CurrencyConverter';
+import TaxEstimator         from './components/TaxEstimator';
+import BudgetVsActual       from './components/BudgetVsActual';
+import BillReminders        from './components/BillReminders';
+import SubscriptionManager  from './components/SubscriptionManager';
+import RecurringTransactions from './components/RecurringTransactions';
+import CategoryManager      from './components/CategoryManager';
+import SpendingLimits       from './components/SpendingLimits';
+import IncomeTracker        from './components/IncomeTracker';
+import DebtTracker          from './components/DebtTracker';
+import InvestmentTracker    from './components/InvestmentTracker';
+import NetWorth             from './components/NetWorth';
+import CashFlow             from './components/CashFlow';
+import FinancialCalendar    from './components/FinancialCalendar';
+import TravelBudget         from './components/TravelBudget';
+import WishlistTracker      from './components/WishlistTracker';
+import FamilyBudget         from './components/FamilyBudget';
+import SearchTransactions   from './components/SearchTransactions';
+import ExportData           from './components/ExportData';
+import Rewards              from './components/Rewards';
+import Achievements         from './components/Achievements';
+import BankAccounts         from './components/BankAccounts';
+import CardManager          from './components/CardManager';
+import HelpSupport          from './components/HelpSupport';
+
 import './index.css';
 
 function AppShell() {
@@ -42,6 +71,35 @@ function AppShell() {
     notifications: <Notifications/>,
     profile:       <Profile/>,
     settings:      <Settings/>,
+
+    // 27 new page routes
+    transactions:   <Transactions/>,
+    savingsgoals:   <SavingsGoals/>,
+    emicalculator:  <EmiCalculator/>,
+    currencyconverter: <CurrencyConverter/>,
+    taxestimator:   <TaxEstimator/>,
+    budgetvsactual: <BudgetVsActual/>,
+    billreminders:  <BillReminders/>,
+    subscriptions:  <SubscriptionManager/>,
+    recurring:      <RecurringTransactions/>,
+    categories:     <CategoryManager/>,
+    limits:         <SpendingLimits/>,
+    income:         <IncomeTracker/>,
+    debt:           <DebtTracker/>,
+    investments:    <InvestmentTracker/>,
+    networth:       <NetWorth/>,
+    cashflow:       <CashFlow/>,
+    calendar:       <FinancialCalendar/>,
+    travel:         <TravelBudget/>,
+    wishlist:       <WishlistTracker/>,
+    family:         <FamilyBudget/>,
+    search:         <SearchTransactions/>,
+    export:         <ExportData/>,
+    rewards:        <Rewards/>,
+    achievements:   <Achievements/>,
+    bankaccounts:   <BankAccounts/>,
+    cards:          <CardManager/>,
+    helpsupport:    <HelpSupport/>,
   };
 
   const currentPage = pageMap[page] || <Dashboard/>;
