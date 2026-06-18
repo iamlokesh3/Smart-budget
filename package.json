@@ -15,7 +15,7 @@
     "test:smoke": "mocha tests/setup.js tests/smoke.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=mochawesome,html=true,json=true",
     "appium:start": "appium --log-level debug --allow-insecure chromedriver_autodownload",
     "test:selenium": "mocha tests/selenium/**/*.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=selenium-report,html=true,json=true",
-    "test:selenium:pom": "mocha tests/testcases/testSetup.js tests/testcases/seleniumPom.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=tests/reports,reportFilename=selenium-report,html=true,json=true",
+    "test:selenium:pom": "mocha tests/testcases/testSetup.js tests/testcases/seleniumPom.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=selenium-report,html=true,json=true",
     "report:selenium:pom": "node tests/utilities/excelReportGenerator.js",
     "test:security": "mocha tests/security/**/*.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=security-report,html=true,json=true",
     "test:appium": "mocha tests/appium/**/*.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports,reportFilename=appium-report,html=true,json=true",

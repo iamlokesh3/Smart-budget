@@ -2,7 +2,7 @@ import ExcelJS from 'exceljs';
 import path from 'path';
 import fs from 'fs';
 
-const reportsDir = path.resolve('tests', 'reports');
+const reportsDir = path.resolve('reports');
 
 // Ensure reports directory exists
 if (!fs.existsSync(reportsDir)) {

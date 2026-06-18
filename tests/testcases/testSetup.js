@@ -3,8 +3,8 @@ import { generateExcelReport } from '../utilities/excelReportGenerator.js';
 import fs from 'fs';
 import path from 'path';
 
-const screenshotsDir = path.resolve('tests', 'screenshots');
-const reportsDir = path.resolve('tests', 'reports');
+const screenshotsDir = path.resolve('screenshots');
+const reportsDir = path.resolve('reports');
 
 // Ensure directories exist
 [screenshotsDir, reportsDir].forEach(dir => {
