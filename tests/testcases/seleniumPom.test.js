@@ -184,7 +184,7 @@ describe('Smart Budget v3 E2E Automation POM Suite', function () {
 
   // Loop through and register all 350 test cases in Mocha
   testCases.forEach(tc => {
-    it(`${tc.correctedId} - ${tc.scenario}`, async function () {
+    it(`${tc.correctedId} | ${tc.module} | ${tc.scenario}`, async function () {
       this.timeout(5000);
       
       if (tc.shouldFail) {
