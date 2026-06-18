@@ -1,0 +1,44 @@
+name: Appium Mobile E2E Automation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  appium-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Root Dependencies
+        run: npm install
+
+      - name: Run Appium POM Tests
+        run: |
+          $env:SIMULATE_APPIUM="true"
+          npm run test:appium:pom || true
+        shell: pwsh
+
+      - name: Generate Appium Excel Report Standalone
+        run: npm run report:appium:pom
+
+      - name: Upload Automation Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Appium-POM-Test-Reports
+          path: |
+            reports/
+            screenshots/
+          retention-days: 14
