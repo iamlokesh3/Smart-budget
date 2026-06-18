@@ -58,7 +58,7 @@ jobs:
           # 5. Install Python dependencies and run Python E2E tests
           pip install selenium
           mkdir -p e2e/reports
-          python e2e/e2e_tests.py > e2e/reports/python-web-e2e.log 2>&1 || PYTHON_FAILED=true
+          python e2e/e2e_tests.py -v > e2e/reports/python-web-e2e.log 2>&1 || PYTHON_FAILED=true
 
           # 5.5. Install root dependencies and generate unified Excel report for Web & Security
           npm install
