@@ -54,8 +54,18 @@ jobs:
           npm run test:selenium:pom || true
         shell: pwsh
 
-      - name: Generate Excel Report
+      - name: Generate Excel Report Standalone (Fallback Validation)
         run: npm run report:selenium:pom
+
+      - name: Organize Reports and Screenshots for Upload
+        if: always()
+        run: |
+          mkdir -p reports
+          mkdir -p screenshots
+          cp tests/reports/selenium-report.html reports/selenium-report.html || true
+          cp tests/reports/Selenium_E2E_Report.xlsx Selenium_E2E_Report.xlsx || true
+          cp -r tests/screenshots/* screenshots/ || true
+          echo "Organized reports successfully."
 
       - name: Upload Automation Artifacts
         uses: actions/upload-artifact@v4
@@ -63,6 +73,9 @@ jobs:
         with:
           name: Selenium-POM-Test-Reports
           path: |
+            reports/
+            screenshots/
+            Selenium_E2E_Report.xlsx
             tests/reports/
             tests/screenshots/
           retention-days: 14
