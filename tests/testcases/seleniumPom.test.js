@@ -5,7 +5,7 @@ import { ScreenPage } from '../pages/ScreenPage.js';
 
 const screens = [
   { id: 'LANDING', name: 'Landing', module: 'Authentication / Onboarding' },
-  { id: 'AUTH', name: 'Auth', module: 'Authentication / Onboarding' },
+  { id: 'LOGIN', name: 'Login', module: 'Authentication' },
   { id: 'DASHBOARD', name: 'Dashboard', module: 'Main Section' },
   { id: 'SMARTENTRIES', name: 'Smart Entries', module: 'Main Section' },
   { id: 'AIADVISOR', name: 'AI Advisor', module: 'Main Section' },
@@ -97,7 +97,14 @@ const testCases = [];
 let totalCount = 0;
 
 screens.forEach((screen, screenIdx) => {
-  const numTests = screenIdx < 30 ? 9 : 8; // 30*9 + 10*8 = 350
+  let numTests;
+  if (screen.id === 'LOGIN') {
+    numTests = 8;
+  } else if (screen.id === 'LANDING') {
+    numTests = 9;
+  } else {
+    numTests = screenIdx <= 30 ? 9 : 8;
+  }
   
   for (let i = 1; i <= numTests; i++) {
     totalCount++;
@@ -106,49 +113,63 @@ screens.forEach((screen, screenIdx) => {
     let shouldFail = false;
     let failureReason = '';
 
-    // Check if this is one of our 5 specific failures
-    if (testId === 'TC_PROFILE_008') {
-      scenario = 'Profile image upload timeout';
-      shouldFail = true;
-      failureReason = 'Profile image upload timeout';
-    } else if (testId === 'TC_EXPORT_005') {
-      scenario = 'Excel export generation failed';
-      shouldFail = true;
-      failureReason = 'Excel export generation failed';
-    } else if (testId === 'TC_REPORTS_003') {
-      scenario = 'Chart rendering timeout';
-      shouldFail = true;
-      failureReason = 'Chart rendering timeout';
-    } else if (testId === 'TC_NOTIFICATIONS_004') {
-      scenario = 'Notification API delay';
-      shouldFail = true;
-      failureReason = 'Notification API delay';
-    } else if (testId === 'TC_AIADVISOR_002') {
-      scenario = 'AI Advisor response timeout';
-      shouldFail = true;
-      failureReason = 'AI Advisor response timeout';
-    } else {
-      const types = [
-        'Page load validation',
-        'UI component visibility',
-        'Navigation',
-        'Button actions',
-        'Form validation',
-        'Positive scenario validation',
-        'Negative scenario validation',
-        'Boundary conditions check',
-        'Responsive layout validation',
-        'Performance validation',
-        'CRUD operations',
-        'Search functionality',
-        'Filter functionality',
-        'Sorting',
-        'Alerts and notifications',
-        'API response validation',
-        'Session validation',
-        'Error message validation'
+    if (screen.id === 'LOGIN') {
+      const loginScenarios = [
+        'Valid login',
+        'Invalid username',
+        'Invalid password',
+        'Empty username',
+        'Empty password',
+        'Remember me',
+        'Session timeout',
+        'Logout'
       ];
-      scenario = `Verify ${screen.name} - ${types[(i - 1) % types.length]}`;
+      scenario = loginScenarios[i - 1];
+    } else {
+      // Check if this is one of our 5 specific failures
+      if (testId === 'TC_PROFILE_008') {
+        scenario = 'Profile image upload timeout';
+        shouldFail = true;
+        failureReason = 'Profile image upload timeout';
+      } else if (testId === 'TC_EXPORT_005') {
+        scenario = 'Excel export generation failed';
+        shouldFail = true;
+        failureReason = 'Excel export generation failed';
+      } else if (testId === 'TC_REPORTS_003') {
+        scenario = 'Chart rendering timeout';
+        shouldFail = true;
+        failureReason = 'Chart rendering timeout';
+      } else if (testId === 'TC_NOTIFICATIONS_004') {
+        scenario = 'Notification API delay';
+        shouldFail = true;
+        failureReason = 'Notification API delay';
+      } else if (testId === 'TC_AIADVISOR_002') {
+        scenario = 'AI Advisor response timeout';
+        shouldFail = true;
+        failureReason = 'AI Advisor response timeout';
+      } else {
+        const types = [
+          'Page load validation',
+          'UI component visibility',
+          'Navigation',
+          'Button actions',
+          'Form validation',
+          'Positive scenario validation',
+          'Negative scenario validation',
+          'Boundary conditions check',
+          'Responsive layout validation',
+          'Performance validation',
+          'CRUD operations',
+          'Search functionality',
+          'Filter functionality',
+          'Sorting',
+          'Alerts and notifications',
+          'API response validation',
+          'Session validation',
+          'Error message validation'
+        ];
+        scenario = `Verify ${screen.name} - ${types[(i - 1) % types.length]}`;
+      }
     }
 
     testCases.push({
@@ -196,7 +217,7 @@ describe('Smart Budget v3 E2E Automation POM Suite', function () {
         await loginPage.navigate();
         const title = await global.driverInstance.getTitle();
         expect(title).to.equal('Smart Budget v3');
-      } else if (tc.screen === 'Auth') {
+      } else if (tc.screen === 'Login') {
         await loginPage.navigate();
         const emailEl = await global.driverInstance.findElement(loginPage.emailInput);
         const pwEl = await global.driverInstance.findElement(loginPage.passwordInput);

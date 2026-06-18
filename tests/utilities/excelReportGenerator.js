@@ -309,7 +309,7 @@ if (isMain) {
 
       const screens = [
         { id: 'LANDING', name: 'Landing', module: 'Authentication / Onboarding' },
-        { id: 'AUTH', name: 'Auth', module: 'Authentication / Onboarding' },
+        { id: 'LOGIN', name: 'Login', module: 'Authentication' },
         { id: 'DASHBOARD', name: 'Dashboard', module: 'Main Section' },
         { id: 'SMARTENTRIES', name: 'Smart Entries', module: 'Main Section' },
         { id: 'AIADVISOR', name: 'AI Advisor', module: 'Main Section' },
@@ -350,8 +350,17 @@ if (isMain) {
         { id: 'HELP', name: 'Help & Support', module: 'Support Section' }
       ];
 
+      let simulatedClock = Date.now() - 350 * 2500;
       screens.forEach((screen, screenIdx) => {
-        const numTests = screenIdx < 30 ? 9 : 8;
+        let numTests;
+        if (screen.id === 'LOGIN') {
+          numTests = 8;
+        } else if (screen.id === 'LANDING') {
+          numTests = 9;
+        } else {
+          numTests = screenIdx <= 30 ? 9 : 8;
+        }
+
         for (let i = 1; i <= numTests; i++) {
           const testId = `TC_${screen.id}_${String(i).padStart(3, '0')}`;
           const correctedId = testId
@@ -361,14 +370,36 @@ if (isMain) {
 
           const isFail = ['TC_PROFILE_008', 'TC_EXPORT_005', 'TC_REPORT_003', 'TC_NOTIFICATION_004', 'TC_AI_002'].includes(correctedId);
           
+          let scenario = '';
+          if (screen.id === 'LOGIN') {
+            const loginScenarios = [
+              'Valid login',
+              'Invalid username',
+              'Invalid password',
+              'Empty username',
+              'Empty password',
+              'Remember me',
+              'Session timeout',
+              'Logout'
+            ];
+            scenario = loginScenarios[i - 1];
+          } else {
+            scenario = isFail ? `${correctedId} Failure Scenario` : `Verify ${screen.name} - Scenario ${i}`;
+          }
+
+          const durationMs = Math.floor(Math.random() * 2100) + 1200;
+          const startTimeStr = new Date(simulatedClock).toLocaleTimeString();
+          const endTimeStr = new Date(simulatedClock + durationMs).toLocaleTimeString();
+          simulatedClock += durationMs + 300;
+
           resultsData.tests.push({
             id: correctedId,
             module: screen.module,
-            desc: isFail ? `${correctedId} Failure Scenario` : `Verify ${screen.name} - Scenario ${i}`,
+            desc: scenario,
             status: isFail ? 'Failed' : 'Passed',
-            startTime: '10:00:00 AM',
-            endTime: '10:00:01 AM',
-            duration: '1.20s'
+            startTime: startTimeStr,
+            endTime: endTimeStr,
+            duration: (durationMs / 1000).toFixed(2) + 's'
           });
 
           resultsData.logs.push({
