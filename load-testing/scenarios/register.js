@@ -8,10 +8,10 @@ const durationTrend = new Trend('register_duration');
 export function register() {
   const url = `${BASE_URL}/api/auth/register`;
   const payload = {
-  "id": "new-user-12345",
-  "name": "New User",
-  "email": "new_user_12345@test.com",
-  "joinedAt": "2026-06-22T04:15:01.520Z"
-};
+    id: 'user-' + __VU + '-' + __ITER + '-' + Math.floor(Math.random() * 1000000),
+    name: 'New User',
+    email: 'new_user_' + __VU + '_' + __ITER + '_' + Math.floor(Math.random() * 1000000) + '@test.com',
+    joinedAt: new Date().toISOString()
+  };
   sendPost(url, payload, SEEDED_USER.userId, 'register', (body) => body.success === true, durationTrend);
 }

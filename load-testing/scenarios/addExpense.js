@@ -8,16 +8,16 @@ const durationTrend = new Trend('addExpense_duration');
 export function addExpense() {
   const url = `${BASE_URL}/api/transactions`;
   const payload = {
-  "id": "tx-add-123",
-  "raw": "Taxi INR 500",
-  "title": "Taxi Ride",
-  "amount": 500,
-  "category": "Transport",
-  "categoryIcon": "🚌",
-  "categoryColor": "#3b82f6",
-  "date": "2026-06-22T04:15:01.523Z",
-  "dateLabel": "Today",
-  "type": "expense"
-};
+    id: 'tx-add-' + __VU + '-' + __ITER + '-' + Math.floor(Math.random() * 1000000),
+    raw: 'Taxi INR 500',
+    title: 'Taxi Ride',
+    amount: 500,
+    category: 'Transport',
+    categoryIcon: '🚌',
+    categoryColor: '#3b82f6',
+    date: new Date().toISOString(),
+    dateLabel: 'Today',
+    type: 'expense'
+  };
   sendPost(url, payload, SEEDED_USER.userId, 'addExpense', (body) => body.success === true, durationTrend);
 }
