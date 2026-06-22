@@ -365,7 +365,7 @@ async function run() {
       'INFO',
       screen,
       `Scenario initialized with 310 virtual users. Starting constant load test...`,
-      0
+      avg
     ]);
     mockLogs.push([
       new Date(Date.now() - 30000 + (idx * 1000)).toISOString(),
