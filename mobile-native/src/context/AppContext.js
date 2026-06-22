@@ -5,12 +5,24 @@ import { generateNotifications } from '../utils/analytics';
 const AppContext = createContext(null);
 
 // Dynamic API Endpoint setup
-// We use the host PC's Wi-Fi IP address so that physical mobile devices on the same Wi-Fi can connect to the local backend.
-const LOCAL_API_URL = 'http://10.155.108.229:5000/api';
+// LOCAL_API_URL: Use the host PC's current Wi-Fi IP so physical devices on the same network can reach the backend.
+// REMOTE_API_URL: Deployed backend on Render (always reachable).
+const LOCAL_API_URL = 'http://10.229.86.229:5000/api';
 const REMOTE_API_URL = 'https://smart-budget-2-brfw.onrender.com/api';
 
-// Use Local API for local development and E2E testing
-const API_URL = LOCAL_API_URL;
+// Use Remote API as primary (always reachable); failover to local for dev/testing.
+const API_URL = REMOTE_API_URL;
+const FALLBACK_API_URL = LOCAL_API_URL;
+
+// Fetch with a timeout to prevent indefinite hangs on unreachable hosts
+function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`Request timed out after ${timeoutMs}ms`)), timeoutMs)
+    ),
+  ]);
+}
 
 export function AppProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -30,28 +42,23 @@ export function AppProvider({ children }) {
 
   const fetchWithAuth = async (url, options = {}) => {
     if (!user) return null;
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-user-id': user.id,
+      ...options.headers,
+    };
     try {
-      const res = await fetch(`${API_URL}${url}`, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': user.id,
-          ...options.headers,
-        },
-      });
+      const res = await fetchWithTimeout(`${API_URL}${url}`, { ...options, headers });
       return res.json();
     } catch (err) {
-      console.warn(`Auth API fetch failed for ${url}: ${err.message}. Retrying locally...`);
-      // Failover to local backend
-      const res = await fetch(`${LOCAL_API_URL}${url}`, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': user.id,
-          ...options.headers,
-        },
-      });
-      return res.json();
+      console.warn(`Primary API failed for ${url}: ${err.message}. Trying fallback...`);
+      try {
+        const res = await fetchWithTimeout(`${FALLBACK_API_URL}${url}`, { ...options, headers });
+        return res.json();
+      } catch (fallbackErr) {
+        console.error(`Fallback API also failed for ${url}: ${fallbackErr.message}`);
+        return null;
+      }
     }
   };
 
@@ -84,19 +91,16 @@ export function AppProvider({ children }) {
       const body = isRegister ? userData : { email: userData.email };
       
       let res;
+      const fetchOpts = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      };
       try {
-        res = await fetch(`${API_URL}${targetUrl}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
+        res = await fetchWithTimeout(`${API_URL}${targetUrl}`, fetchOpts);
       } catch (e) {
-        console.warn('Authentication failover to local backend...');
-        res = await fetch(`${LOCAL_API_URL}${targetUrl}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
+        console.warn('Primary auth failed, trying fallback...', e.message);
+        res = await fetchWithTimeout(`${FALLBACK_API_URL}${targetUrl}`, fetchOpts);
       }
 
       if (!res.ok) throw new Error('Authentication failed');
@@ -113,18 +117,16 @@ export function AppProvider({ children }) {
   const loginExisting = useCallback(async (email) => {
     try {
       let res;
+      const fetchOpts = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      };
       try {
-        res = await fetch(`${API_URL}/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
+        res = await fetchWithTimeout(`${API_URL}/auth/login`, fetchOpts);
       } catch (e) {
-        res = await fetch(`${LOCAL_API_URL}/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
+        console.warn('Primary login failed, trying fallback...', e.message);
+        res = await fetchWithTimeout(`${FALLBACK_API_URL}/auth/login`, fetchOpts);
       }
 
       if (!res.ok) throw new Error('User not found');
