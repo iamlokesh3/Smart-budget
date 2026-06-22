@@ -1,0 +1,144 @@
+# =============================================================================
+# Smart Budget AI — K6 Load Testing Workflow
+# =============================================================================
+name: K6 Load Testing (40 Screens)
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'load-testing/**'
+      - '.github/workflows/k6-load-testing.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'load-testing/**'
+  workflow_dispatch:
+    inputs:
+      vus:
+        description: 'Number of Virtual Users per scenario'
+        required: false
+        default: '5'
+      duration:
+        description: 'Load test duration'
+        required: false
+        default: '1m'
+
+env:
+  NODE_VERSION: '18'
+  BASE_URL: 'http://localhost:5000'
+  VUS: ${{ github.event.inputs.vus || '5' }} # Default to 5 VUs on CI to prevent resource exhaustion
+
+jobs:
+  load-test:
+    name: 🚀 Run 40-Screen Load Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: 📦 Install Backend Dependencies
+        working-directory: backend
+        run: |
+          npm install
+
+      - name: 🔄 Start Backend Server
+        working-directory: backend
+        run: |
+          echo "Starting Express backend..."
+          node server.js > /tmp/backend.log 2>&1 &
+          echo $! > /tmp/backend.pid
+          echo "Backend PID: $(cat /tmp/backend.pid)"
+
+          echo "Waiting for backend to be ready..."
+          for i in $(seq 1 20); do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+              http://localhost:5000/api/transactions \
+              -H 'x-user-id: 1781096350731' 2>/dev/null || echo "000")
+
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "✅ Backend ready after ${i} attempt(s) — HTTP $HTTP_CODE"
+              break
+            fi
+            echo "  Attempt ${i}/20: HTTP $HTTP_CODE — retrying in 2s..."
+            sleep 2
+          done
+
+      - name: 🏥 Backend Health Check
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            http://localhost:5000/api/transactions \
+            -H 'x-user-id: 1781096350731' 2>/dev/null || echo "000")
+          echo "Backend health check status: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Backend health check failed (status: $STATUS)!"
+            echo "Backend log:"
+            cat /tmp/backend.log || true
+            exit 1
+          fi
+          echo "✅ Backend is healthy"
+
+      - name: 📦 Install K6 Load Testing Runner
+        run: |
+          echo "Installing k6..."
+          sudo gpg -k
+          sudo gpg \
+            --no-default-keyring \
+            --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+            --keyserver hkp://keyserver.ubuntu.com:80 \
+            --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] \
+            https://dl.k6.io/deb stable main" \
+            | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update -qq
+          sudo apt-get install -y k6
+          k6 version
+
+      - name: 📦 Install Load Testing Node Dependencies
+        working-directory: load-testing
+        run: |
+          npm install
+
+      - name: 🔥 Run K6 Load Tests
+        run: |
+          k6 run \
+            -e BASE_URL=${{ env.BASE_URL }} \
+            -e VUS=${{ env.VUS }} \
+            -e TEST_DURATION=${{ github.event.inputs.duration || '1m' }} \
+            load-testing/main.js
+
+      - name: 📊 Compile Performance Reports
+        working-directory: load-testing
+        run: |
+          npm run report:all
+
+      - name: 📤 Upload Excel & Markdown Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: K6-Load-Testing-Reports-${{ github.run_number }}
+          path: |
+            load-testing/reports/Load_Testing_Report.xlsx
+            load-testing/reports/Load_Testing_Test_Cases.md
+            load-testing/reports/summary.json
+          retention-days: 30
+
+      - name: 🛑 Stop Backend Server
+        if: always()
+        run: |
+          if [ -f /tmp/backend.pid ]; then
+            PID=$(cat /tmp/backend.pid)
+            kill "$PID" 2>/dev/null && echo "✅ Backend stopped (PID $PID)" || echo "Backend already stopped"
+          fi
+          echo ""
+          echo "Backend log (last 20 lines):"
+          tail -20 /tmp/backend.log 2>/dev/null || echo "(no log)"

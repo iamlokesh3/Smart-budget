@@ -1,0 +1,18 @@
+{
+  "name": "smart-budget-load-testing",
+  "version": "1.0.0",
+  "description": "K6 Load Testing Framework for Smart Budget AI Application",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "generate-scenarios": "node scripts/generateScenarios.js",
+    "generate-main": "node scripts/generateMain.js",
+    "generate-report": "node scripts/generateReport.js",
+    "generate-docs": "node scripts/generateDocs.js",
+    "test": "k6 run main.js",
+    "report:all": "npm run generate-report && npm run generate-docs"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  }
+}

@@ -241,6 +241,141 @@ app.post('/api/ai/chat', auth, async (req, res) => {
   });
 });
 
+// --- STUB ROUTES FOR 40 MODULES LOAD TESTING ---
+app.post('/api/auth/forgot-password', (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required' });
+  res.json({ success: true, message: 'OTP sent to email' });
+});
+
+app.post('/api/auth/verify-otp', (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) return res.status(400).json({ error: 'Email and OTP are required' });
+  res.json({ success: true, token: 'mock-session-token-12345' });
+});
+
+app.post('/api/transactions/ocr', auth, (req, res) => {
+  res.json({
+    success: true,
+    extracted: {
+      title: 'Grocery Store',
+      amount: 1250,
+      category: 'Food',
+      date: new Date().toISOString()
+    }
+  });
+});
+
+app.get('/api/notifications', auth, (req, res) => {
+  res.json([
+    { id: '1', title: 'Budget Limit', message: 'You have reached 80% of your Food budget', read: false },
+    { id: '2', title: 'Goal Achieved', message: 'Congratulations! You reached your savings goal: Emergency Fund', read: true }
+  ]);
+});
+
+app.get('/api/profile', auth, (req, res) => {
+  res.json({
+    id: req.userId,
+    name: 'Lokesh',
+    email: 'lokeshmk436@gmail.com',
+    joinedAt: '2026-06-10T12:59:10.731Z'
+  });
+});
+
+app.get('/api/settings', auth, (req, res) => {
+  res.json({
+    theme: 'dark',
+    currency: 'INR',
+    notificationsEnabled: true
+  });
+});
+
+app.post('/api/settings/theme', auth, (req, res) => {
+  const { theme } = req.body;
+  res.json({ success: true, theme: theme || 'dark' });
+});
+
+app.post('/api/settings/currency', auth, (req, res) => {
+  const { currency } = req.body;
+  res.json({ success: true, currency: currency || 'INR' });
+});
+
+app.post('/api/bank-accounts', auth, (req, res) => {
+  const { bankName, accountNumber } = req.body;
+  res.json({ success: true, linkedAccount: { bankName, accountNumberLastFour: accountNumber?.slice(-4) || '1234' } });
+});
+
+app.get('/api/transactions/export/pdf', auth, (req, res) => {
+  res.json({ success: true, downloadUrl: '/downloads/transactions_report.pdf' });
+});
+
+app.get('/api/transactions/export/excel', auth, (req, res) => {
+  res.json({ success: true, downloadUrl: '/downloads/transactions_report.xlsx' });
+});
+
+app.post('/api/payments/qr-scan', auth, (req, res) => {
+  const { qrData, amount } = req.body;
+  res.json({ success: true, transactionId: 'qr-tx-' + Date.now(), amount });
+});
+
+app.post('/api/support/chat', auth, (req, res) => {
+  const { message } = req.body;
+  res.json({ reply: 'Thank you for reaching out to support. A human agent will connect shortly.', ticketId: 'ticket-' + Date.now() });
+});
+
+app.get('/api/ai/recommendations', auth, (req, res) => {
+  res.json({
+    recommendations: [
+      { id: 'rec-1', type: 'saving', text: 'You could save INR 500 weekly by reducing dining out.' },
+      { id: 'rec-2', type: 'investment', text: 'Consider setting up a recurring deposit for your Emergency Fund goal.' }
+    ]
+  });
+});
+
+app.get('/api/transactions/analytics', auth, (req, res) => {
+  res.json({
+    monthlySpending: [
+      { month: 'January', amount: 15000 },
+      { month: 'February', amount: 12000 },
+      { month: 'March', amount: 18000 }
+    ],
+    topCategories: [
+      { category: 'Food', percentage: 35 },
+      { category: 'Shopping', percentage: 25 }
+    ]
+  });
+});
+
+app.get('/api/transactions/charts/pie', auth, (req, res) => {
+  res.json({
+    labels: ['Food', 'Bills', 'Transport', 'Entertainment'],
+    datasets: [{ data: [40, 30, 15, 15] }]
+  });
+});
+
+app.get('/api/transactions/charts/bar', auth, (req, res) => {
+  res.json({
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [{ data: [120, 250, 80, 400, 150, 600, 50] }]
+  });
+});
+
+app.get('/api/settings/security', auth, (req, res) => {
+  res.json({
+    twoFactorEnabled: false,
+    lastPasswordChange: '2026-06-10T12:59:10.731Z'
+  });
+});
+
+app.post('/api/settings/change-password', auth, (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  res.json({ success: true, message: 'Password updated successfully' });
+});
+
+app.post('/api/auth/logout', auth, (req, res) => {
+  res.json({ success: true, message: 'Logged out successfully' });
+});
+
 initDB().then(() => {
   app.listen(PORT, () => console.log(`Backend server running on http://localhost:${PORT}`));
 });
