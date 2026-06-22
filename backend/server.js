@@ -3,6 +3,14 @@ import cors from 'cors';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 
+// Prevent Node.js process from crashing under heavy load testing errors
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception thrown:', err);
+});
+
 const app = express();
 const PORT = 5000;
 
@@ -16,6 +24,12 @@ async function initDB() {
     filename: './database.sqlite',
     driver: sqlite3.Database
   });
+
+  // Enable Write-Ahead Logging (WAL) and set busy timeout to 10 seconds to handle concurrent writes
+  await db.exec(`
+    PRAGMA journal_mode = WAL;
+    PRAGMA busy_timeout = 10000;
+  `);
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS users (
@@ -114,22 +128,37 @@ app.get('/api/transactions', auth, async (req, res) => {
 
 app.post('/api/transactions', auth, async (req, res) => {
   const { id, raw, title, amount, category, categoryIcon, categoryColor, date, dateLabel, type } = req.body;
-  await db.run(
-    'INSERT INTO transactions (id, userId, raw, title, amount, category, categoryIcon, categoryColor, date, dateLabel, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [id, req.userId, raw, title, amount, category, categoryIcon, categoryColor, date, dateLabel, type]
-  );
-  res.json({ success: true });
+  try {
+    await db.run(
+      'INSERT INTO transactions (id, userId, raw, title, amount, category, categoryIcon, categoryColor, date, dateLabel, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [id, req.userId, raw, title, amount, category, categoryIcon, categoryColor, date, dateLabel, type]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error in POST /api/transactions:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.put('/api/transactions/:id', auth, async (req, res) => {
   const { title } = req.body;
-  await db.run('UPDATE transactions SET title = ? WHERE id = ? AND userId = ?', [title, req.params.id, req.userId]);
-  res.json({ success: true });
+  try {
+    await db.run('UPDATE transactions SET title = ? WHERE id = ? AND userId = ?', [title, req.params.id, req.userId]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error in PUT /api/transactions/:id:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.delete('/api/transactions/:id', auth, async (req, res) => {
-  await db.run('DELETE FROM transactions WHERE id = ? AND userId = ?', [req.params.id, req.userId]);
-  res.json({ success: true });
+  try {
+    await db.run('DELETE FROM transactions WHERE id = ? AND userId = ?', [req.params.id, req.userId]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error in DELETE /api/transactions/:id:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // --- RENAME CATEGORY ---
@@ -164,44 +193,73 @@ app.get('/api/budgets', auth, async (req, res) => {
 
 app.post('/api/budgets', auth, async (req, res) => {
   const { id, type, amount, createdAt } = req.body;
-  // Upsert pattern for SQLite (delete then insert if type exists)
-  await db.run('DELETE FROM budgets WHERE userId = ? AND type = ?', [req.userId, type]);
-  await db.run(
-    'INSERT INTO budgets (id, userId, type, amount, createdAt) VALUES (?, ?, ?, ?, ?)',
-    [id, req.userId, type, amount, createdAt]
-  );
-  res.json({ success: true });
+  try {
+    // Upsert pattern for SQLite (delete then insert if type exists)
+    await db.run('DELETE FROM budgets WHERE userId = ? AND type = ?', [req.userId, type]);
+    await db.run(
+      'INSERT INTO budgets (id, userId, type, amount, createdAt) VALUES (?, ?, ?, ?, ?)',
+      [id, req.userId, type, amount, createdAt]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error in POST /api/budgets:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.delete('/api/budgets/:id', auth, async (req, res) => {
-  await db.run('DELETE FROM budgets WHERE id = ? AND userId = ?', [req.params.id, req.userId]);
-  res.json({ success: true });
+  try {
+    await db.run('DELETE FROM budgets WHERE id = ? AND userId = ?', [req.params.id, req.userId]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error in DELETE /api/budgets/:id:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // --- GOALS ---
 app.get('/api/goals', auth, async (req, res) => {
-  const goals = await db.all('SELECT * FROM goals WHERE userId = ?', [req.userId]);
-  res.json(goals);
+  try {
+    const goals = await db.all('SELECT * FROM goals WHERE userId = ?', [req.userId]);
+    res.json(goals);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.post('/api/goals', auth, async (req, res) => {
   const { id, name, target, current, createdAt } = req.body;
-  await db.run(
-    'INSERT INTO goals (id, userId, name, target, current, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
-    [id, req.userId, name, target, current, createdAt]
-  );
-  res.json({ success: true });
+  try {
+    await db.run(
+      'INSERT INTO goals (id, userId, name, target, current, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
+      [id, req.userId, name, target, current, createdAt]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error in POST /api/goals:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.put('/api/goals/:id', auth, async (req, res) => {
   const { current } = req.body;
-  await db.run('UPDATE goals SET current = ? WHERE id = ? AND userId = ?', [current, req.params.id, req.userId]);
-  res.json({ success: true });
+  try {
+    await db.run('UPDATE goals SET current = ? WHERE id = ? AND userId = ?', [current, req.params.id, req.userId]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error in PUT /api/goals/:id:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.delete('/api/goals/:id', auth, async (req, res) => {
-  await db.run('DELETE FROM goals WHERE id = ? AND userId = ?', [req.params.id, req.userId]);
-  res.json({ success: true });
+  try {
+    await db.run('DELETE FROM goals WHERE id = ? AND userId = ?', [req.params.id, req.userId]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error in DELETE /api/goals/:id:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // --- AI ADVISOR ---
