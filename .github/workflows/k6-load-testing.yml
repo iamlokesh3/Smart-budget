@@ -8,11 +8,13 @@ on:
     branches: [main, develop]
     paths:
       - 'load-testing/**'
+      - 'backend/**'
       - '.github/workflows/k6-load-testing.yml'
   pull_request:
     branches: [main]
     paths:
       - 'load-testing/**'
+      - 'backend/**'
   workflow_dispatch:
     inputs:
       vus:
